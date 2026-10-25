@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,40 +7,40 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f4f5fa;color:#222338;font-family:Arial,sans-serif}
-header{background:white;border-bottom:1px solid #e4e5ee;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
-.logo{font-size:23px;font-weight:900;color:#635bff}.logo span{color:#222338}
-main{max-width:950px;margin:24px auto;padding:0 14px}
+header{background:white;border-bottom:1px solid #e4e5ee;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0}
+.logo{font-size:23px;font-weight:900;color:#635bff}
+.logo span{color:#222338}
+main{max-width:900px;margin:24px auto;padding:0 14px}
 .card{background:white;border:1px solid #e5e6ee;border-radius:16px;padding:18px;margin-bottom:16px}
-h2{margin-top:0}h3{margin-top:0}
+h2{margin-top:0}
 input,textarea{width:100%;padding:12px;margin:7px 0;border:1px solid #dddfea;border-radius:10px;font:inherit}
 textarea{resize:vertical;min-height:80px}
 button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700;background:#635bff;color:white}
-button:disabled{opacity:.55;cursor:wait}
-.light{background:#efeeff;color:#554be4}.danger{background:#fff0f0;color:#c62828}
+button:disabled{opacity:.6}
+.light{background:#efeeff;color:#554be4}
+.danger{background:#fff0f0;color:#c62828}
 .hidden{display:none!important}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
-.muted{color:#77798b;font-size:13px}.status{font-size:14px;margin-top:10px;overflow-wrap:anywhere}
-.error{color:#c62828}.success{color:#188038}
-.avatar{width:42px;height:42px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#eceaff;color:#554be4;font-weight:bold}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.muted{color:#77798b;font-size:13px}
+.status{font-size:14px;margin-top:10px;overflow-wrap:anywhere}
+.error{color:#c62828}
+.success{color:#188038}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eceaff;color:#554be4;font-weight:bold}
 .posthead{display:flex;gap:10px;align-items:center}
 .posttext{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;margin:18px 0}
 .posttime{font-size:12px;color:#77798b;margin-top:4px}
 .actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid #eee;padding-top:12px}
 .actions button{background:#f0efff;color:#5148d8}
-.media{display:block;width:100%;max-height:520px;object-fit:contain;background:#111;border-radius:12px;margin:12px 0}
-.post-media{width:100%;max-height:520px;object-fit:contain;background:#111;border-radius:12px;margin:12px 0}
 .comment{background:#f6f6fb;border-radius:9px;padding:10px;margin:8px 0;overflow-wrap:anywhere}
 .comment p{margin:5px 0;white-space:pre-wrap}
 #feed{margin-top:15px}
-#toast{position:fixed;bottom:15px;left:5%;width:90%;background:#222338;color:white;padding:12px;border-radius:10px;z-index:9;overflow-wrap:anywhere}
-.typebtn.active{background:#635bff;color:white}
-.typebtn{background:#efeeff;color:#554be4}
-#preview{max-width:100%;max-height:300px;border-radius:12px;margin:10px 0}
-footer{padding:20px 0}
-@media(min-width:760px){.columns{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px}}
+#toast{position:fixed;bottom:15px;left:5%;width:90%;background:#222338;color:white;padding:12px;border-radius:10px;z-index:9}
+@media(min-width:760px){.columns{display:grid;grid-template-columns:260px 1fr;gap:16px}}
 </style>
 </head>
 <body>
+
 <header>
   <div class="logo">ONEHUB <span>Social</span></div>
   <div class="row">
@@ -56,16 +55,19 @@ footer{padding:20px 0}
   <section id="auth" class="card">
     <h2>Welcome to ONEHUB</h2>
     <p class="muted">Connect. Share. Discover.</p>
+
     <div class="row">
       <button id="loginTab" class="light">Login</button>
       <button id="signupTab">Create account</button>
     </div>
+
     <form id="loginForm" class="hidden">
       <input id="loginEmail" type="email" placeholder="Email" required>
       <input id="loginPass" type="password" placeholder="Password" required>
       <button type="submit">Login</button>
       <button id="forgot" type="button" class="light">Reset password</button>
     </form>
+
     <form id="signupForm">
       <input id="newName" placeholder="Display name" maxlength="50" required>
       <input id="newUsername" placeholder="Username (letters, numbers, _)" maxlength="20" required>
@@ -84,10 +86,14 @@ footer{padding:20px 0}
           <h3>My profile</h3>
           <div class="row">
             <div id="avatar" class="avatar">U</div>
-            <div><strong id="displayName"></strong><div id="username" class="muted"></div></div>
+            <div>
+              <strong id="displayName"></strong>
+              <div id="username" class="muted"></div>
+            </div>
           </div>
           <p id="bio" class="muted"></p>
           <button id="editBtn" class="light">Edit profile</button>
+
           <form id="profileForm" class="hidden">
             <input id="editName" placeholder="Display name" maxlength="50" required>
             <input id="editUsername" placeholder="Username" maxlength="20" required>
@@ -101,42 +107,29 @@ footer{padding:20px 0}
 
       <section>
         <div class="card">
-          <h2>Create a post</h2>
-          <p class="muted">Choose what you want to share.</p>
-          <div class="row">
-            <button type="button" class="typebtn active" data-type="text">✍️ Text</button>
-            <button type="button" class="typebtn" data-type="image">📷 Photo</button>
-            <button type="button" class="typebtn" data-type="video">🎬 Video</button>
-          </div>
+          <h2>Your feed</h2>
           <form id="postForm">
-            <textarea id="postText" maxlength="1000" placeholder="What's on your mind?"></textarea>
-            <div id="mediaPicker" class="hidden">
-              <label id="fileLabel" for="mediaFile">Choose a photo</label>
-              <input id="mediaFile" type="file" accept="image/jpeg,image/png,image/webp">
-              <div class="muted" id="fileHint">Images: JPG, PNG or WebP. Maximum 10 MB.</div>
-              <div id="previewBox" class="hidden">
-                <img id="preview" alt="Selected media preview">
-              </div>
-            </div>
+            <textarea id="postText" maxlength="1000" placeholder="What's on your mind?" required></textarea>
             <div class="row between">
               <span id="count" class="muted">0/1000</span>
-              <button id="publish" type="submit">Publish text post</button>
+              <button id="publish" type="submit">Publish post</button>
             </div>
-            <progress id="uploadProgress" value="0" max="100" class="hidden" style="width:100%;margin-top:12px"></progress>
-            <div id="postStatus" class="status"></div>
           </form>
         </div>
 
         <div class="card">
-          <input id="search" placeholder="Search loaded posts or usernames...">
-          <div id="searchInfo" class="muted">Showing latest posts</div>
+          <input id="search" placeholder="Search posts or usernames...">
+          <div id="searchInfo" class="muted"></div>
         </div>
+
         <div id="feed"></div>
       </section>
     </div>
   </section>
+
   <footer class="muted">ONEHUB Social · Share respectfully and protect your privacy.</footer>
 </main>
+
 <div id="toast" class="hidden"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -146,7 +139,7 @@ footer{padding:20px 0}
 <script>
 "use strict";
 
-/* 1. FIREBASE CONFIG */
+/* FIREBASE CONFIGURATION */
 const firebaseConfig = {
   apiKey: "AIzaSyDwWAS2dcTQhbQTmahKNzJJzlqBye6Zb54",
   authDomain: "onehub-social.firebaseapp.com",
@@ -156,10 +149,6 @@ const firebaseConfig = {
   appId: "1:888069396409:web:20d3e0d3ebba2961be0868",
   measurementId: "G-G63E9C76EN"
 };
-
-/* 2. CLOUDINARY CONFIG — FILL THESE TWO VALUES */
-const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";
-const CLOUDINARY_UPLOAD_PRESET = "YOUR_UNSIGNED_UPLOAD_PRESET";
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -172,9 +161,6 @@ let posts = [];
 let stopFeed = null;
 let stopLikes = {};
 let stopComments = {};
-let selectedType = "text";
-let selectedFile = null;
-let previewURL = null;
 let toastTimer;
 
 const $ = id => document.getElementById(id);
@@ -192,17 +178,17 @@ function toast(text){
   $("toast").textContent=text;
   $("toast").classList.remove("hidden");
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3500);
+  toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3200);
 }
 function dateText(ts){
-  if(!ts || !ts.toDate)return "Just now";
+  if(!ts || !ts.toDate) return "Just now";
   return ts.toDate().toLocaleString();
 }
 function initials(name){
   return (String(name||"U").trim()[0]||"U").toUpperCase();
 }
 
-/* 3. LOGIN / SIGNUP TABS */
+/* AUTH TABS */
 $("loginTab").onclick=()=>{
   $("loginForm").classList.remove("hidden");
   $("signupForm").classList.add("hidden");
@@ -216,7 +202,7 @@ $("signupTab").onclick=()=>{
   $("loginTab").classList.add("light");
 };
 
-/* 4. SIGN UP */
+/* SIGN UP */
 $("signupForm").onsubmit=async e=>{
   e.preventDefault();
   const name=$("newName").value.trim();
@@ -227,16 +213,21 @@ $("signupForm").onsubmit=async e=>{
 
   if(!usernameOK(username))
     return message("authStatus","Username must be 3–20 letters, numbers or underscores.");
-  if(!name||name.length>50||bio.length>160)
+  if(!name || name.length>50 || bio.length>160)
     return message("authStatus","Please check your name and bio.");
 
   try{
     message("authStatus","Creating account...",false);
     const result=await auth.createUserWithEmailAndPassword(email,password);
     const user=result.user;
+
     await db.collection("users").doc(user.uid).set({
-      displayName:name,username,usernameLower:lower(username),bio,
-      createdAt:serverTime(),updatedAt:serverTime()
+      displayName:name,
+      username:username,
+      usernameLower:lower(username),
+      bio:bio,
+      createdAt:serverTime(),
+      updatedAt:serverTime()
     });
     await user.updateProfile({displayName:name});
     toast("Account created!");
@@ -246,12 +237,13 @@ $("signupForm").onsubmit=async e=>{
   }
 };
 
-/* 5. LOGIN */
+/* LOGIN */
 $("loginForm").onsubmit=async e=>{
   e.preventDefault();
   try{
     await auth.signInWithEmailAndPassword(
-      $("loginEmail").value.trim(),$("loginPass").value
+      $("loginEmail").value.trim(),
+      $("loginPass").value
     );
     toast("Welcome back!");
   }catch(err){
@@ -260,23 +252,29 @@ $("loginForm").onsubmit=async e=>{
   }
 };
 
+/* PASSWORD RESET */
 $("forgot").onclick=async()=>{
   const email=$("loginEmail").value.trim();
-  if(!email)return message("authStatus","Enter your email first.");
+  if(!email) return message("authStatus","Enter your email first.");
   try{
     await auth.sendPasswordResetEmail(email);
     message("authStatus","If the account exists, a reset email has been sent.",false);
-  }catch(err){message("authStatus",err.message);}
+  }catch(err){
+    message("authStatus",err.message);
+  }
 };
+
 $("logout").onclick=()=>auth.signOut();
 
-/* 6. AUTH STATE */
+/* AUTH STATE */
 auth.onAuthStateChanged(async user=>{
   me=user;
   if(stopFeed){stopFeed();stopFeed=null;}
   Object.values(stopLikes).forEach(fn=>fn());
   Object.values(stopComments).forEach(fn=>fn());
-  stopLikes={};stopComments={};posts=[];
+  stopLikes={};
+  stopComments={};
+  posts=[];
 
   $("auth").classList.toggle("hidden",!!user);
   $("app").classList.toggle("hidden",!user);
@@ -284,7 +282,6 @@ auth.onAuthStateChanged(async user=>{
   $("headerName").textContent=user?(user.displayName||user.email):"";
 
   if(!user){
-    profile=null;
     $("notice").textContent="Please log in or create an account to use ONEHUB Social.";
     $("feed").innerHTML="";
     return;
@@ -295,20 +292,27 @@ auth.onAuthStateChanged(async user=>{
   startFeed();
 });
 
-/* 7. PROFILE */
+/* PROFILE */
 async function loadProfile(){
   try{
     const ref=db.collection("users").doc(me.uid);
     const snap=await ref.get();
-    if(snap.exists)profile=snap.data();
-    else{
+    if(snap.exists){
+      profile=snap.data();
+    }else{
       const uname="user_"+me.uid.slice(0,8);
-      profile={displayName:me.displayName||"New user",username:uname,usernameLower:uname.toLowerCase(),bio:""};
+      profile={
+        displayName:me.displayName||"New user",
+        username:uname,
+        usernameLower:uname.toLowerCase(),
+        bio:""
+      };
       await ref.set({...profile,createdAt:serverTime(),updatedAt:serverTime()});
     }
     renderProfile();
   }catch(err){
-    console.error(err);toast("Profile error: "+err.message);
+    console.error(err);
+    toast("Profile error: "+err.message);
   }
 }
 function renderProfile(){
@@ -322,7 +326,9 @@ function renderProfile(){
   $("editUsername").value=profile.username||"";
   $("editBio").value=profile.bio||"";
 }
-$("editBtn").onclick=()=>$("profileForm").classList.toggle("hidden");
+$("editBtn").onclick=()=>{
+  $("profileForm").classList.toggle("hidden");
+};
 $("cancelEdit").onclick=()=>$("profileForm").classList.add("hidden");
 
 $("profileForm").onsubmit=async e=>{
@@ -330,6 +336,7 @@ $("profileForm").onsubmit=async e=>{
   const displayName=$("editName").value.trim();
   const username=$("editUsername").value.trim();
   const bio=$("editBio").value.trim();
+
   if(!usernameOK(username))
     return message("profileStatus","Username must be 3–20 letters, numbers or underscores.");
   if(!displayName||displayName.length>50||bio.length>160)
@@ -337,7 +344,11 @@ $("profileForm").onsubmit=async e=>{
 
   try{
     await db.collection("users").doc(me.uid).update({
-      displayName,username,usernameLower:lower(username),bio,updatedAt:serverTime()
+      displayName,
+      username,
+      usernameLower:lower(username),
+      bio,
+      updatedAt:serverTime()
     });
     await me.updateProfile({displayName});
     profile={...profile,displayName,username,usernameLower:lower(username),bio};
@@ -345,222 +356,68 @@ $("profileForm").onsubmit=async e=>{
     $("profileForm").classList.add("hidden");
     message("profileStatus","Profile saved.",false);
   }catch(err){
-    console.error(err);message("profileStatus",err.message);
+    console.error(err);
+    message("profileStatus",err.message);
   }
 };
 
-/* 8. SELECT TEXT / PHOTO / VIDEO */
-document.querySelectorAll(".typebtn").forEach(btn=>{
-  btn.onclick=()=>{
-    selectedType=btn.dataset.type;
-    document.querySelectorAll(".typebtn").forEach(b=>b.classList.toggle("active",b===btn));
-    $("mediaPicker").classList.toggle("hidden",selectedType==="text");
-    $("mediaFile").value="";
-    selectedFile=null;
-    clearPreview();
-
-    if(selectedType==="text"){
-      $("mediaFile").accept="image/jpeg,image/png,image/webp";
-      $("fileLabel").textContent="Choose a photo";
-      $("fileHint").textContent="Images: JPG, PNG or WebP. Maximum 10 MB.";
-      $("publish").textContent="Publish text post";
-      $("postText").placeholder="What's on your mind?";
-    }else if(selectedType==="image"){
-      $("mediaFile").accept="image/jpeg,image/png,image/webp";
-      $("fileLabel").textContent="Choose a photo";
-      $("fileHint").textContent="Images: JPG, PNG or WebP. Maximum 10 MB.";
-      $("publish").textContent="Publish photo";
-      $("postText").placeholder="Write a caption (optional)";
-    }else{
-      $("mediaFile").accept="video/mp4,video/webm,video/quicktime";
-      $("fileLabel").textContent="Choose a video";
-      $("fileHint").textContent="Videos: MP4, WebM or MOV. Maximum 50 MB.";
-      $("publish").textContent="Publish video";
-      $("postText").placeholder="Write a caption (optional)";
-    }
-    $("postStatus").textContent="";
-  };
-});
-
-function clearPreview(){
-  if(previewURL){URL.revokeObjectURL(previewURL);previewURL=null;}
-  $("previewBox").classList.add("hidden");
-  $("preview").removeAttribute("src");
-}
-$("mediaFile").onchange=()=>{
-  clearPreview();
-  const file=$("mediaFile").files[0];
-  selectedFile=file||null;
-  if(!file)return;
-
-  const max=selectedType==="image"?10*1024*1024:50*1024*1024;
-  if(file.size>max){
-    selectedFile=null;
-    $("mediaFile").value="";
-    return message("postStatus","File is too large. Please choose a smaller file.");
-  }
-  if(selectedType==="image"&&!file.type.startsWith("image/")){
-    selectedFile=null;
-    $("mediaFile").value="";
-    return message("postStatus","Please choose an image file.");
-  }
-  if(selectedType==="video"&&!file.type.startsWith("video/")){
-    selectedFile=null;
-    $("mediaFile").value="";
-    return message("postStatus","Please choose a video file.");
-  }
-  previewURL=URL.createObjectURL(file);
-  $("preview").src=previewURL;
-  $("preview").alt="Selected "+selectedType+" preview";
-  $("preview").style.display=selectedType==="video"?"none":"block";
-  if(selectedType==="video"){
-    const vid=document.createElement("video");
-    vid.controls=true;vid.playsInline=true;vid.className="media";vid.src=previewURL;
-    $("previewBox").replaceChildren(vid);
-  }else{
-    $("previewBox").replaceChildren($("preview"));
-  }
-  $("previewBox").classList.remove("hidden");
-  message("postStatus","Selected: "+file.name,false);
-};
-
+/* CREATE POST */
 $("postText").oninput=()=>{
   $("count").textContent=$("postText").value.length+"/1000";
 };
-
-/* 9. UPLOAD MEDIA TO CLOUDINARY */
-async function uploadMedia(file,type){
-  if(CLOUDINARY_CLOUD_NAME==="YOUR_CLOUD_NAME"||
-     CLOUDINARY_UPLOAD_PRESET==="YOUR_UNSIGNED_UPLOAD_PRESET"){
-    throw new Error("Add your Cloudinary cloud name and unsigned upload preset in the code first.");
-  }
-  const resourceType=type==="video"?"video":"image";
-  const url="https://api.cloudinary.com/v1_1/"+
-    encodeURIComponent(CLOUDINARY_CLOUD_NAME)+"/"+resourceType+"/upload";
-  const form=new FormData();
-  form.append("file",file);
-  form.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
-
-  $("uploadProgress").classList.remove("hidden");
-  $("uploadProgress").value=15;
-  const response=await fetch(url,{method:"POST",body:form});
-  $("uploadProgress").value=90;
-  const data=await response.json();
-  if(!response.ok)throw new Error(data.error?.message||"Media upload failed.");
-  $("uploadProgress").value=100;
-
-  return {
-    mediaUrl:data.secure_url,
-    mediaType:type,
-    mediaPublicId:data.public_id||"",
-    mediaFormat:data.format||"",
-    mediaBytes:data.bytes||0
-  };
-}
-
-/* 10. CREATE TEXT / PHOTO / VIDEO POST */
 $("postForm").onsubmit=async e=>{
   e.preventDefault();
   const text=$("postText").value.trim();
+  if(!text)return;
   if(!me||!profile)return toast("Please log in first.");
-  if(text.length>1000)return toast("Caption is too long.");
-  if(selectedType==="text"&&!text)return toast("Write some text first.");
-  if(selectedType!=="text"&&!selectedFile)return toast("Please choose a file first.");
 
-  const file=selectedFile;
-  const type=selectedType;
   $("publish").disabled=true;
-  $("postStatus").textContent="Publishing...";
-
   try{
-    let media={};
-    if(type!=="text"){
-      message("postStatus","Uploading media...",false);
-      media=await uploadMedia(file,type);
-    }
-
-    const postData={
+    await db.collection("posts").add({
       userId:me.uid,
       displayName:profile.displayName,
       username:profile.username,
       usernameLower:profile.usernameLower,
-      text:text,
+      text,
       createdAt:serverTime()
-    };
-    if(type!=="text")Object.assign(postData,media);
-
-    await db.collection("posts").add(postData);
+    });
     $("postText").value="";
     $("count").textContent="0/1000";
-    $("mediaFile").value="";
-    selectedFile=null;
-    clearPreview();
-    $("uploadProgress").classList.add("hidden");
-    $("uploadProgress").value=0;
-    message("postStatus","Your post has been published!",false);
     toast("Post published!");
   }catch(err){
     console.error(err);
-    $("uploadProgress").classList.add("hidden");
-    message("postStatus",err.message||"Post failed.");
-    toast("Post failed. Check Firebase rules and Cloudinary settings.");
+    toast("Post failed: "+err.message);
   }finally{
     $("publish").disabled=false;
   }
 };
 
-/* 11. LIVE FEED */
+/* LIVE FEED */
 function startFeed(){
   if(stopFeed)stopFeed();
-  stopFeed=db.collection("posts").orderBy("createdAt","desc").limit(40)
+  stopFeed=db.collection("posts")
+    .orderBy("createdAt","desc")
+    .limit(40)
     .onSnapshot(snapshot=>{
       posts=snapshot.docs.map(d=>({id:d.id,...d.data()}));
-      renderFeed(getFilteredPosts());
+      renderFeed(posts);
     },err=>{
       console.error(err);
       $("feed").innerHTML='<div class="card error">Feed error: '+safe(err.message)+'</div>';
     });
 }
 
-function getFilteredPosts(){
-  const q=$("search").value.trim().toLowerCase();
-  if(!q)return posts;
-  return posts.filter(p=>
-    String(p.text||"").toLowerCase().includes(q)||
-    String(p.username||"").toLowerCase().includes(q)||
-    String(p.displayName||"").toLowerCase().includes(q)||
-    String(p.mediaType||"").toLowerCase().includes(q)
-  );
-}
-
 function renderFeed(list){
-  Object.values(stopLikes).forEach(fn=>fn());
-  Object.values(stopComments).forEach(fn=>fn());
-  stopLikes={};stopComments={};
   $("feed").innerHTML="";
-  $("searchInfo").textContent=$("search").value.trim()
-    ?list.length+" matching loaded post(s)"
-    :"Showing the latest posts";
-
   if(!list.length){
-    $("feed").innerHTML='<div class="card">No matching posts yet.</div>';
+    $("feed").innerHTML='<div class="card">No posts yet. Be the first to share something!</div>';
     return;
   }
-
   list.forEach(post=>{
     const el=document.createElement("article");
     el.className="card";
     el.id="post_"+post.id;
     const own=me&&post.userId===me.uid;
-
-    let mediaHTML="";
-    if(post.mediaUrl&&post.mediaType==="image"){
-      mediaHTML='<img class="post-media" src="'+safe(post.mediaUrl)+
-        '" alt="Photo post" loading="lazy">';
-    }else if(post.mediaUrl&&post.mediaType==="video"){
-      mediaHTML='<video class="post-media" controls playsinline preload="metadata" src="'+
-        safe(post.mediaUrl)+'"></video>';
-    }
 
     el.innerHTML=`
       <div class="posthead">
@@ -571,8 +428,7 @@ function renderFeed(list){
           <div class="posttime">${safe(dateText(post.createdAt))}</div>
         </div>
       </div>
-      ${post.text?'<div class="posttext">'+safe(post.text)+'</div>':""}
-      ${mediaHTML}
+      <div class="posttext">${safe(post.text)}</div>
       <div class="actions">
         <button class="likeBtn">♡ Like <span class="likeCount">0</span></button>
         <button class="commentToggle">Comments</button>
@@ -589,6 +445,7 @@ function renderFeed(list){
     $("feed").appendChild(el);
     watchLikes(post.id,el);
     watchComments(post.id,el);
+
     el.querySelector(".likeBtn").onclick=()=>toggleLike(post.id);
     el.querySelector(".commentToggle").onclick=()=>{
       el.querySelector(".commentArea").classList.toggle("hidden");
@@ -598,15 +455,16 @@ function renderFeed(list){
   });
 }
 
-/* 12. LIKES */
 function watchLikes(postId,el){
-  stopLikes[postId]=db.collection("posts").doc(postId).collection("likes")
-    .onSnapshot(snapshot=>{
+  if(stopLikes[postId])stopLikes[postId]();
+  stopLikes[postId]=db.collection("posts").doc(postId)
+    .collection("likes").onSnapshot(snapshot=>{
       const btn=el.querySelector(".likeBtn");
       if(!btn)return;
       btn.querySelector(".likeCount").textContent=snapshot.size;
       const liked=!!(me&&snapshot.docs.some(d=>d.id===me.uid));
       btn.firstChild.textContent=liked?"♥ Unlike ":"♡ Like ";
+      btn.classList.toggle("liked",liked);
     },err=>console.error("Likes:",err));
 }
 
@@ -618,30 +476,34 @@ async function toggleLike(postId){
     if(snap.exists)await ref.delete();
     else await ref.set({userId:me.uid,createdAt:serverTime()});
   }catch(err){
-    console.error(err);toast("Like failed: "+err.message);
+    console.error(err);
+    toast("Like failed: "+err.message);
   }
 }
 
-/* 13. COMMENTS */
 function watchComments(postId,el){
-  stopComments[postId]=db.collection("posts").doc(postId).collection("comments")
-    .orderBy("createdAt","asc").limit(50).onSnapshot(snapshot=>{
+  if(stopComments[postId])stopComments[postId]();
+  stopComments[postId]=db.collection("posts").doc(postId)
+    .collection("comments").orderBy("createdAt","asc").limit(50)
+    .onSnapshot(snapshot=>{
       const box=el.querySelector(".commentsList");
       if(!box)return;
       box.innerHTML="";
-      if(snapshot.empty){box.textContent="No comments yet.";return;}
+      if(snapshot.empty){
+        box.textContent="No comments yet.";
+        return;
+      }
       snapshot.forEach(doc=>{
         const c=doc.data();
         const div=document.createElement("div");
         div.className="comment";
-        div.innerHTML="<strong>"+safe(c.displayName||"User")+"</strong><p>"+
-          safe(c.text)+"</p>";
+        div.innerHTML="<strong>"+safe(c.displayName||"User")+
+          "</strong><p>"+safe(c.text)+"</p>";
         box.appendChild(div);
       });
     },err=>{
       console.error("Comments:",err);
-      const box=el.querySelector(".commentsList");
-      if(box)box.textContent="Could not load comments.";
+      el.querySelector(".commentsList").textContent="Could not load comments.";
     });
 }
 
@@ -653,27 +515,42 @@ async function addComment(e,postId,el){
   if(!text)return;
   try{
     await db.collection("posts").doc(postId).collection("comments").add({
-      userId:me.uid,displayName:profile.displayName,text,createdAt:serverTime()
+      userId:me.uid,
+      displayName:profile.displayName,
+      text,
+      createdAt:serverTime()
     });
     input.value="";
   }catch(err){
-    console.error(err);toast("Comment failed: "+err.message);
+    console.error(err);
+    toast("Comment failed: "+err.message);
   }
 }
 
-/* 14. DELETE POST */
 async function deletePost(postId){
   if(!confirm("Delete this post permanently?"))return;
   try{
     await db.collection("posts").doc(postId).delete();
     toast("Post deleted.");
   }catch(err){
-    console.error(err);toast("Delete failed: "+err.message);
+    console.error(err);
+    toast("Delete failed: "+err.message);
   }
 }
 
-/* 15. SEARCH */
-$("search").oninput=()=>renderFeed(getFilteredPosts());
+/* SEARCH: SEARCHES THE POSTS ALREADY LOADED IN THE FEED */
+$("search").oninput=()=>{
+  const q=$("search").value.trim().toLowerCase();
+  const filtered=posts.filter(p=>
+    String(p.text||"").toLowerCase().includes(q)||
+    String(p.username||"").toLowerCase().includes(q)||
+    String(p.displayName||"").toLowerCase().includes(q)
+  );
+  $("searchInfo").textContent=q
+    ?filtered.length+" matching loaded post(s)"
+    :"Showing the latest posts";
+  renderFeed(filtered);
+};
 </script>
 </body>
 </html>
