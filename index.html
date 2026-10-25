@@ -2,144 +2,751 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050505">
 <title>ONEHUB Social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f4f5fa;color:#222338;font-family:Arial,sans-serif}
-header{background:white;border-bottom:1px solid #e4e5ee;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0}
-.logo{font-size:23px;font-weight:900;color:#635bff}
-.logo span{color:#222338}
-main{max-width:900px;margin:24px auto;padding:0 14px}
-.card{background:white;border:1px solid #e5e6ee;border-radius:16px;padding:18px;margin-bottom:16px}
-h2{margin-top:0}
-input,textarea{width:100%;padding:12px;margin:7px 0;border:1px solid #dddfea;border-radius:10px;font:inherit}
-textarea{resize:vertical;min-height:80px}
-button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700;background:#635bff;color:white}
-button:disabled{opacity:.6}
-.light{background:#efeeff;color:#554be4}
-.danger{background:#fff0f0;color:#c62828}
-.hidden{display:none!important}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.between{justify-content:space-between}
-.muted{color:#77798b;font-size:13px}
-.status{font-size:14px;margin-top:10px;overflow-wrap:anywhere}
-.error{color:#c62828}
-.success{color:#188038}
-.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eceaff;color:#554be4;font-weight:bold}
-.posthead{display:flex;gap:10px;align-items:center}
-.posttext{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;margin:18px 0}
-.posttime{font-size:12px;color:#77798b;margin-top:4px}
-.actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid #eee;padding-top:12px}
-.actions button{background:#f0efff;color:#5148d8}
-.comment{background:#f6f6fb;border-radius:9px;padding:10px;margin:8px 0;overflow-wrap:anywhere}
-.comment p{margin:5px 0;white-space:pre-wrap}
-#feed{margin-top:15px}
-#toast{position:fixed;bottom:15px;left:5%;width:90%;background:#222338;color:white;padding:12px;border-radius:10px;z-index:9}
-@media(min-width:760px){.columns{display:grid;grid-template-columns:260px 1fr;gap:16px}}
+:root {
+  color-scheme: dark;
+  --bg: #050505;
+  --panel: #0c0c0c;
+  --panel2: #121212;
+  --line: #222;
+  --line-soft: #1a1a1a;
+  --text: #f4f4f4;
+  --muted: #888;
+  --soft: #b0b0b0;
+  --white: #fff;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 16px 48px rgba(0,0,0,.55);
+  --t: .2s cubic-bezier(.4,0,.2,1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, .logo, button, .pill strong {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+button, input, textarea { font: inherit; color: inherit; }
+button {
+  border: 1px solid #fff;
+  border-radius: var(--radius-sm);
+  padding: 11px 18px;
+  cursor: pointer;
+  font-weight: 600;
+  background: #fff;
+  color: #000;
+  transition: transform var(--t), background var(--t), border-color var(--t), opacity var(--t);
+  letter-spacing: -0.01em;
+}
+button:hover:not(:disabled) { transform: translateY(-1px); }
+button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+button.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: #3a3a3a;
+}
+button.secondary:hover:not(:disabled) {
+  border-color: #666;
+  background: #151515;
+}
+button.ghost {
+  background: var(--panel2);
+  color: var(--text);
+  border-color: #2c2c2c;
+}
+button.ghost:hover:not(:disabled) {
+  background: #1c1c1c;
+  border-color: #444;
+}
+button.danger {
+  background: transparent;
+  color: #ff8585;
+  border-color: #5c2a2a;
+}
+button.danger:hover:not(:disabled) { background: #1a0f0f; }
+button.small { padding: 7px 12px; font-size: 13px; border-radius: 9px; }
+button.tiny { padding: 5px 10px; font-size: 12px; border-radius: 8px; }
+.hidden { display: none !important; }
+
+/* Header */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: rgba(5,5,5,.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--line);
+  padding: 14px max(18px, calc((100% - 1200px)/2));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.logo {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -1.2px;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  cursor: pointer;
+}
+.logo span {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.3px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#headerName {
+  font-size: 13px;
+  color: var(--soft);
+  font-weight: 500;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Main */
+main {
+  max-width: 1200px;
+  margin: 28px auto 60px;
+  padding: 0 18px;
+}
+.card {
+  background: linear-gradient(165deg, #121212 0%, #0d0d0d 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+h2 {
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  letter-spacing: -0.3px;
+}
+.muted { color: var(--muted); font-size: 13px; }
+.soft { color: var(--soft); font-size: 13px; }
+
+/* Forms */
+input, textarea {
+  width: 100%;
+  padding: 13px 15px;
+  margin: 8px 0;
+  border: 1px solid #2a2a2a;
+  background: #0a0a0a;
+  color: var(--text);
+  border-radius: 13px;
+  outline: none;
+  transition: border-color var(--t), box-shadow var(--t);
+  font-size: 15px;
+}
+input:focus, textarea:focus {
+  border-color: #666;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.07);
+}
+textarea {
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.55;
+}
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.between { justify-content: space-between; }
+.status {
+  font-size: 13px;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+.error { color: #ff8585; }
+.success { color: #8dffb0; }
+
+/* Avatar */
+.avatar {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.avatar.sm { width: 38px; height: 38px; flex: 0 0 38px; }
+.avatar.lg { width: 88px; height: 88px; flex: 0 0 88px; border-width: 2px; }
+.avatar.xl { width: 110px; height: 110px; flex: 0 0 110px; border-width: 3px; }
+
+/* Post */
+.posthead {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.posthead strong {
+  font-weight: 650;
+  font-size: 15px;
+  cursor: pointer;
+  letter-spacing: -0.2px;
+}
+.posthead strong:hover { text-decoration: underline; }
+.posttime {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.posttext {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+  margin: 15px 0 13px;
+  font-size: 15.5px;
+  color: #e8e8e8;
+}
+.posttext .mention,
+.posttext .hashtag {
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.posttext .mention:hover,
+.posttext .hashtag:hover { opacity: .85; }
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 14px;
+  align-items: center;
+}
+.actions button {
+  background: #161616;
+  color: #f0f0f0;
+  border-color: #2e2e2e;
+  font-size: 13px;
+  padding: 8px 13px;
+}
+.actions button:hover:not(:disabled) {
+  background: #1f1f1f;
+  border-color: #444;
+}
+.actions button.liked,
+.actions button.bookmarked {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+.stat {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+/* Comments */
+.comment {
+  background: #141414;
+  border: 1px solid #262626;
+  border-radius: 13px;
+  padding: 12px 14px;
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.comment p {
+  margin: 6px 0 0;
+  white-space: pre-wrap;
+  font-size: 14px;
+  color: #ddd;
+}
+.comment strong {
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.comment strong:hover { text-decoration: underline; }
+
+/* Layout */
+#feed { margin-top: 8px; }
+.columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.sidebar-card { position: relative; }
+.profile-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border: 1px solid #2e2e2e;
+  border-radius: 999px;
+  color: #ccc;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: #101010;
+}
+.pill strong {
+  color: #fff;
+  font-weight: 700;
+}
+.navrow {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 14px 0 5px;
+}
+.navrow button { flex: 1; min-width: 100px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.feed-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.feed-tabs button {
+  flex: 1;
+  font-size: 13.5px;
+}
+
+/* Notifications */
+.notification {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 13.5px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+.notification:last-child { border-bottom: 0; }
+.notification.unread { color: #fff; }
+.notification .muted {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+}
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 420px;
+  background: #fff;
+  color: #000;
+  padding: 15px 20px;
+  border-radius: 14px;
+  z-index: 100;
+  box-shadow: 0 14px 44px rgba(0,0,0,.55);
+  font-size: 14.5px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.empty {
+  padding: 36px 22px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed #333;
+  border-radius: 16px;
+  font-size: 14.5px;
+}
+footer {
+  text-align: center;
+  padding: 32px 0 50px;
+  color: #555;
+  font-size: 12.5px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 16px 0;
+}
+
+/* ========== AUTH (Premium) ========== */
+#auth {
+  max-width: 440px;
+  margin: 40px auto;
+  padding: 36px 32px;
+}
+#auth h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  letter-spacing: -0.8px;
+}
+#auth .auth-desc {
+  color: var(--muted);
+  font-size: 15px;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+.auth-tabs {
+  display: flex;
+  background: #111;
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 24px;
+  border: 1px solid #222;
+}
+.auth-tabs button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  padding: 11px;
+  border-radius: 11px;
+  font-weight: 600;
+  font-size: 14.5px;
+}
+.auth-tabs button.active {
+  background: #fff;
+  color: #000;
+}
+.auth-tabs button:hover:not(.active) {
+  color: #fff;
+  background: transparent;
+  transform: none;
+}
+#auth form button[type="submit"] {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  font-size: 15px;
+}
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Avatar style picker */
+.avatar-styles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 12px 0 8px;
+}
+.avatar-style {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  background: #1a1a1a;
+  transition: border-color var(--t), transform var(--t);
+}
+.avatar-style:hover { transform: scale(1.06); }
+.avatar-style.selected { border-color: #fff; }
+.avatar-style img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Profile view */
+.profile-view .bio {
+  margin: 12px 0;
+  line-height: 1.6;
+  font-size: 15px;
+}
+.profile-view .meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+  font-size: 13.5px;
+  color: var(--soft);
+}
+.profile-stats {
+  display: flex;
+  gap: 20px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.profile-stats strong {
+  color: #fff;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+/* Suggestions */
+.suggest-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.suggest-item:last-child { border-bottom: 0; }
+.suggest-item .info { flex: 1; min-width: 0; }
+.suggest-item strong {
+  font-size: 14px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.suggest-item .muted { font-size: 12.5px; }
+
+/* Tags */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.tag-cloud span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #161616;
+  border: 1px solid #2c2c2c;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background var(--t);
+}
+.tag-cloud span:hover {
+  background: #222;
+  border-color: #444;
+}
+
+/* Responsive */
+@media (min-width: 960px) {
+  .columns {
+    grid-template-columns: 300px minmax(0, 1fr) 270px;
+  }
+  .sidebar-card,
+  .right-sidebar {
+    position: sticky;
+    top: 90px;
+    align-self: start;
+  }
+}
+@media (max-width: 959px) {
+  .right-sidebar { display: none; }
+}
+@media (max-width: 520px) {
+  header { padding: 12px 14px; }
+  .logo { font-size: 20px; }
+  main { padding: 0 12px; margin-top: 18px; }
+  .card { padding: 16px; border-radius: 15px; }
+  .header-actions #headerName { display: none; }
+  #auth { margin: 20px auto; padding: 28px 20px; }
+  #auth h2 { font-size: 24px; }
+  .avatar-styles { grid-template-columns: repeat(4, 1fr); }
+  button { padding: 10px 14px; }
+  .actions button { font-size: 12.5px; padding: 7px 11px; }
+}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">ONEHUB <span>Social</span></div>
-  <div class="row">
+  <div class="logo" id="logoHome">ONEHUB <span>Social</span></div>
+  <div class="header-actions">
     <span id="headerName" class="muted"></span>
-    <button id="logout" class="light hidden">Log out</button>
+    <button id="notificationsBtn" class="secondary hidden" type="button">Notifications <span id="unreadCount"></span></button>
+    <button id="logout" class="secondary hidden" type="button">Log out</button>
   </div>
 </header>
 
 <main>
-  <div id="notice" class="card">Connecting to Firebase...</div>
+  <div id="notice" class="card" style="display:none"></div>
 
+  <!-- ========== AUTH ========== -->
   <section id="auth" class="card">
-    <h2>Welcome to ONEHUB</h2>
-    <p class="muted">Connect. Share. Discover.</p>
+    <h2 id="authTitle">Welcome back</h2>
+    <p class="auth-desc" id="authDesc">Sign in to continue to ONEHUB</p>
 
-    <div class="row">
-      <button id="loginTab" class="light">Login</button>
-      <button id="signupTab">Create account</button>
+    <div class="auth-tabs">
+      <button type="button" id="loginTab" class="active">Log in</button>
+      <button type="button" id="signupTab">Create account</button>
     </div>
 
-    <form id="loginForm" class="hidden">
-      <input id="loginEmail" type="email" placeholder="Email" required>
-      <input id="loginPass" type="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-      <button id="forgot" type="button" class="light">Reset password</button>
+    <form id="loginForm">
+      <input id="loginEmail" type="email" placeholder="Email address" autocomplete="email" required>
+      <input id="loginPass" type="password" placeholder="Password" autocomplete="current-password" required>
+      <button type="submit">Continue</button>
+      <div class="auth-footer">
+        <button type="button" id="forgot" class="secondary tiny" style="border:none;background:transparent;color:var(--muted);padding:0">Forgot password?</button>
+      </div>
     </form>
 
-    <form id="signupForm">
-      <input id="newName" placeholder="Display name" maxlength="50" required>
-      <input id="newUsername" placeholder="Username (letters, numbers, _)" maxlength="20" required>
-      <input id="newEmail" type="email" placeholder="Email address" required>
-      <input id="newPass" type="password" placeholder="Password (6+ characters)" minlength="6" required>
+    <form id="signupForm" class="hidden">
+      <input id="newName" placeholder="Display name" maxlength="50" autocomplete="name" required>
+      <input id="newUsername" placeholder="Username" maxlength="20" required>
+      <input id="newEmail" type="email" placeholder="Email address" autocomplete="email" required>
+      <input id="newPass" type="password" placeholder="Password (min 6 characters)" minlength="6" autocomplete="new-password" required>
       <textarea id="newBio" placeholder="Short bio (optional)" maxlength="160"></textarea>
+
+      <div class="muted" style="margin:14px 0 6px;font-size:13px">Choose your avatar style</div>
+      <div class="avatar-styles" id="signupAvatarStyles"></div>
+      <input type="hidden" id="newAvatarStyle" value="notionists">
+
       <button type="submit">Create account</button>
     </form>
+
     <div id="authStatus" class="status"></div>
   </section>
 
+  <!-- ========== APP ========== -->
   <section id="app" class="hidden">
     <div class="columns">
+      <!-- LEFT -->
       <aside>
-        <div class="card">
+        <div class="card sidebar-card">
           <h3>My profile</h3>
-          <div class="row">
-            <div id="avatar" class="avatar">U</div>
+          <div class="profile-summary">
+            <div id="avatar" class="avatar"></div>
             <div>
-              <strong id="displayName"></strong>
+              <strong id="displayName" style="font-size:16px"></strong>
               <div id="username" class="muted"></div>
             </div>
           </div>
           <p id="bio" class="muted"></p>
-          <button id="editBtn" class="light">Edit profile</button>
+          <div class="row" style="margin-top:12px;gap:8px">
+            <span class="pill">Followers <strong id="myFollowers">0</strong></span>
+            <span class="pill">Following <strong id="myFollowing">0</strong></span>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <span class="pill">Posts <strong id="myPostCount">0</strong></span>
+            <span class="pill">Joined <strong id="myJoined">—</strong></span>
+          </div>
+          <div class="navrow">
+            <button id="editBtn" class="secondary" type="button">Edit profile</button>
+            <button id="showNotifications" class="ghost" type="button">Notifications</button>
+          </div>
+          <div class="navrow" style="margin-top:0">
+            <button id="showBookmarks" class="ghost" type="button">Bookmarks</button>
+            <button id="showMyPosts" class="ghost" type="button">My posts</button>
+          </div>
 
           <form id="profileForm" class="hidden">
             <input id="editName" placeholder="Display name" maxlength="50" required>
             <input id="editUsername" placeholder="Username" maxlength="20" required>
             <textarea id="editBio" placeholder="Bio" maxlength="160"></textarea>
-            <button type="submit">Save profile</button>
-            <button id="cancelEdit" type="button" class="light">Cancel</button>
+            <input id="editLink" placeholder="Website / link (optional)" maxlength="100">
+            <input id="editLocation" placeholder="Location (optional)" maxlength="40">
+            <div class="muted" style="margin:12px 0 6px;font-size:13px">Avatar style</div>
+            <div class="avatar-styles" id="editAvatarStyles"></div>
+            <input type="hidden" id="editAvatarStyle" value="notionists">
+            <div class="row" style="margin-top:12px">
+              <button type="submit">Save changes</button>
+              <button id="cancelEdit" type="button" class="secondary">Cancel</button>
+            </div>
           </form>
           <div id="profileStatus" class="status"></div>
+
+          <hr>
+          <div id="notificationsPanel" class="hidden">
+            <div class="section-title">
+              <h3 style="margin:0">Notifications</h3>
+              <button id="markRead" class="secondary small" type="button">Mark read</button>
+            </div>
+            <div id="notificationsList" class="muted">No notifications yet.</div>
+          </div>
         </div>
       </aside>
 
+      <!-- CENTER -->
       <section>
-        <div class="card">
-          <h2>Your feed</h2>
+        <div class="card" id="composerCard">
+          <h2>Create a post</h2>
           <form id="postForm">
-            <textarea id="postText" maxlength="1000" placeholder="What's on your mind?" required></textarea>
+            <textarea id="postText" maxlength="1000" placeholder="What's happening? Use @username and #hashtag" required></textarea>
             <div class="row between">
               <span id="count" class="muted">0/1000</span>
-              <button id="publish" type="submit">Publish post</button>
+              <button id="publish" type="submit">Publish</button>
             </div>
           </form>
         </div>
 
         <div class="card">
-          <input id="search" placeholder="Search posts or usernames...">
-          <div id="searchInfo" class="muted"></div>
+          <input id="search" placeholder="Search posts, @users, #hashtags..." aria-label="Search">
+          <div id="searchInfo" class="muted" style="margin-top:8px">Showing the latest posts</div>
         </div>
 
+        <div class="feed-tabs">
+          <button id="latestTab" type="button">Latest</button>
+          <button id="trendingTab" class="secondary" type="button">Trending</button>
+          <button id="followingTab" class="secondary" type="button">Following</button>
+          <button id="bookmarksTab" class="secondary" type="button">Bookmarks</button>
+        </div>
         <div id="feed"></div>
       </section>
+
+      <!-- RIGHT -->
+      <aside class="right-sidebar">
+        <div class="card">
+          <h3>Trending hashtags</h3>
+          <div id="tagCloud" class="tag-cloud muted">Loading...</div>
+        </div>
+        <div class="card">
+          <h3>Who to follow</h3>
+          <div id="suggestions" class="muted">Loading...</div>
+        </div>
+      </aside>
     </div>
   </section>
 
-  <footer class="muted">ONEHUB Social · Share respectfully and protect your privacy.</footer>
+  <footer>ONEHUB Social · Text-first. Professional. Free plan friendly.</footer>
 </main>
 
-<div id="toast" class="hidden"></div>
+<div id="toast" class="hidden" role="status"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
 <script>
 "use strict";
 
-/* FIREBASE CONFIGURATION */
 const firebaseConfig = {
   apiKey: "AIzaSyDwWAS2dcTQhbQTmahKNzJJzlqBye6Zb54",
   authDomain: "onehub-social.firebaseapp.com",
@@ -154,403 +761,909 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const serverTime = () => firebase.firestore.FieldValue.serverTimestamp();
-
-let me = null;
-let profile = null;
-let posts = [];
-let stopFeed = null;
-let stopLikes = {};
-let stopComments = {};
-let toastTimer;
-
 const $ = id => document.getElementById(id);
-const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
-const usernameOK = value => /^[A-Za-z0-9_]{3,20}$/.test(value);
-const lower = value => value.trim().replace(/^@/,"").toLowerCase();
+const safe = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const usernameOK = v => /^[A-Za-z0-9_]{3,20}$/.test(v);
+const lower = v => v.trim().replace(/^@/, "").toLowerCase();
 
-function message(id,text,error=true){
-  $(id).textContent=text;
-  $(id).className="status "+(error?"error":"success");
+/* High quality DiceBear styles */
+const AVATAR_STYLES = [
+  { id: "notionists", label: "Notionists" },
+  { id: "avataaars", label: "Avataaars" },
+  { id: "lorelei", label: "Lorelei" },
+  { id: "personas", label: "Personas" },
+  { id: "big-smile", label: "Big Smile" },
+  { id: "fun-emoji", label: "Fun" },
+  { id: "bottts", label: "Bottts" },
+  { id: "micah", label: "Micah" }
+];
+
+function avatarUrl(style, seed) {
+  const s = style || "notionists";
+  const sd = encodeURIComponent(seed || "user");
+  return `https://api.dicebear.com/9.x/${s}/svg?seed=${sd}&backgroundColor=1a1a1a`;
 }
-function toast(text){
-  $("toast").textContent=text;
+
+function avatarHTML(style, seed, sizeClass = "") {
+  return `<div class="avatar ${sizeClass}"><img src="${avatarUrl(style, seed)}" alt="avatar" loading="lazy"></div>`;
+}
+
+let me = null, profile = null, posts = [], stopFeed = null;
+let stopLikes = {}, stopFollowers = null, stopFollowing = null, stopNotifications = null;
+let likeCounts = {}, commentCounts = {}, followingIds = new Set(), bookmarkIds = new Set();
+let notifications = [], activeFeed = "latest", toastTimer, viewingUser = null;
+const busyFollows = new Set();
+
+/* Helpers */
+function message(id, text, error = true) {
+  $(id).textContent = text;
+  $(id).className = "status " + (error ? "error" : "success");
+}
+function toast(text) {
+  $("toast").textContent = text;
   $("toast").classList.remove("hidden");
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3200);
+  toastTimer = setTimeout(() => $("toast").classList.add("hidden"), 3200);
 }
-function dateText(ts){
-  if(!ts || !ts.toDate) return "Just now";
-  return ts.toDate().toLocaleString();
+function dateText(ts) {
+  if (!ts || !ts.toDate) return "Just now";
+  try { return ts.toDate().toLocaleString(); } catch { return "Recently"; }
 }
-function initials(name){
-  return (String(name||"U").trim()[0]||"U").toUpperCase();
+function shortDate(ts) {
+  if (!ts || !ts.toDate) return "—";
+  try {
+    return ts.toDate().toLocaleDateString(undefined, { month: "short", year: "numeric" });
+  } catch { return "—"; }
 }
-
-/* AUTH TABS */
-$("loginTab").onclick=()=>{
-  $("loginForm").classList.remove("hidden");
-  $("signupForm").classList.add("hidden");
-  $("loginTab").classList.remove("light");
-  $("signupTab").classList.add("light");
-};
-$("signupTab").onclick=()=>{
-  $("signupForm").classList.remove("hidden");
-  $("loginForm").classList.add("hidden");
-  $("signupTab").classList.remove("light");
-  $("loginTab").classList.add("light");
-};
-
-/* SIGN UP */
-$("signupForm").onsubmit=async e=>{
-  e.preventDefault();
-  const name=$("newName").value.trim();
-  const username=$("newUsername").value.trim();
-  const email=$("newEmail").value.trim();
-  const password=$("newPass").value;
-  const bio=$("newBio").value.trim();
-
-  if(!usernameOK(username))
-    return message("authStatus","Username must be 3–20 letters, numbers or underscores.");
-  if(!name || name.length>50 || bio.length>160)
-    return message("authStatus","Please check your name and bio.");
-
-  try{
-    message("authStatus","Creating account...",false);
-    const result=await auth.createUserWithEmailAndPassword(email,password);
-    const user=result.user;
-
-    await db.collection("users").doc(user.uid).set({
-      displayName:name,
-      username:username,
-      usernameLower:lower(username),
-      bio:bio,
-      createdAt:serverTime(),
-      updatedAt:serverTime()
+function stopAllListeners() {
+  if (stopFeed) { stopFeed(); stopFeed = null; }
+  Object.values(stopLikes).forEach(fn => { try { fn(); } catch {} });
+  stopLikes = {};
+  if (stopFollowers) { stopFollowers(); stopFollowers = null; }
+  if (stopFollowing) { stopFollowing(); stopFollowing = null; }
+  if (stopNotifications) { stopNotifications(); stopNotifications = null; }
+}
+function setAuthTab(tab) {
+  const login = tab === "login";
+  $("loginForm").classList.toggle("hidden", !login);
+  $("signupForm").classList.toggle("hidden", login);
+  $("loginTab").classList.toggle("active", login);
+  $("signupTab").classList.toggle("active", !login);
+  $("authTitle").textContent = login ? "Welcome back" : "Join ONEHUB";
+  $("authDesc").textContent = login ? "Sign in to continue to ONEHUB" : "Create your account in seconds";
+}
+function linkify(text) {
+  return safe(text)
+    .replace(/@([A-Za-z0-9_]{3,20})/g, '<span class="mention" data-user="$1">@$1</span>')
+    .replace(/#([A-Za-z0-9_]{2,30})/g, '<span class="hashtag" data-tag="$1">#$1</span>');
+}
+function extractHashtags(text) {
+  const tags = [];
+  const re = /#([A-Za-z0-9_]{2,30})/g;
+  let m;
+  while ((m = re.exec(text))) tags.push(m[1].toLowerCase());
+  return [...new Set(tags)];
+}
+function renderAvatarStylePickers() {
+  const make = (containerId, hiddenId, current) => {
+    const box = $(containerId);
+    if (!box) return;
+    box.innerHTML = "";
+    const seed = (profile && profile.username) || "preview" + Math.random().toString(36).slice(2, 6);
+    AVATAR_STYLES.forEach(st => {
+      const el = document.createElement("div");
+      el.className = "avatar-style" + ((current || "notionists") === st.id ? " selected" : "");
+      el.innerHTML = `<img src="${avatarUrl(st.id, seed)}" alt="${st.label}">`;
+      el.title = st.label;
+      el.onclick = () => {
+        $(hiddenId).value = st.id;
+        box.querySelectorAll(".avatar-style").forEach(x => x.classList.remove("selected"));
+        el.classList.add("selected");
+      };
+      box.appendChild(el);
     });
-    await user.updateProfile({displayName:name});
-    toast("Account created!");
-  }catch(err){
-    console.error(err);
-    message("authStatus",err.message||"Could not create account.");
+  };
+  make("signupAvatarStyles", "newAvatarStyle", $("newAvatarStyle").value);
+  make("editAvatarStyles", "editAvatarStyle", $("editAvatarStyle").value);
+}
+
+/* Auth tabs */
+$("loginTab").onclick = () => setAuthTab("login");
+$("signupTab").onclick = () => setAuthTab("signup");
+$("logoHome").onclick = () => {
+  if (me) {
+    viewingUser = null;
+    activeFeed = "latest";
+    setFeedMode("latest");
+    $("composerCard").classList.remove("hidden");
   }
 };
 
-/* LOGIN */
-$("loginForm").onsubmit=async e=>{
+/* Signup */
+$("signupForm").onsubmit = async e => {
   e.preventDefault();
-  try{
-    await auth.signInWithEmailAndPassword(
-      $("loginEmail").value.trim(),
-      $("loginPass").value
-    );
-    toast("Welcome back!");
-  }catch(err){
+  const name = $("newName").value.trim();
+  const username = $("newUsername").value.trim();
+  const email = $("newEmail").value.trim();
+  const password = $("newPass").value;
+  const bio = $("newBio").value.trim();
+  const avatarStyle = $("newAvatarStyle").value || "notionists";
+  if (!usernameOK(username)) return message("authStatus", "Username must be 3–20 letters, numbers or underscores.");
+  if (!name || name.length > 50 || bio.length > 160) return message("authStatus", "Please check your name and bio.");
+  try {
+    message("authStatus", "Checking username...", false);
+    const exists = await db.collection("users").where("usernameLower", "==", lower(username)).limit(1).get();
+    if (!exists.empty) return message("authStatus", "Username already taken.");
+    message("authStatus", "Creating account...", false);
+    const result = await auth.createUserWithEmailAndPassword(email, password);
+    const user = result.user;
+    await db.collection("users").doc(user.uid).set({
+      displayName: name,
+      username,
+      usernameLower: lower(username),
+      bio,
+      avatarStyle,
+      link: "",
+      location: "",
+      postCount: 0,
+      createdAt: serverTime(),
+      updatedAt: serverTime()
+    });
+    await user.updateProfile({ displayName: name });
+    toast("Account created!");
+  } catch (err) {
     console.error(err);
-    message("authStatus",err.message||"Login failed.");
+    message("authStatus", friendlyError(err));
   }
 };
 
-/* PASSWORD RESET */
-$("forgot").onclick=async()=>{
-  const email=$("loginEmail").value.trim();
-  if(!email) return message("authStatus","Enter your email first.");
-  try{
+/* Login */
+$("loginForm").onsubmit = async e => {
+  e.preventDefault();
+  try {
+    await auth.signInWithEmailAndPassword($("loginEmail").value.trim(), $("loginPass").value);
+    toast("Welcome back!");
+  } catch (err) {
+    console.error(err);
+    message("authStatus", friendlyError(err));
+  }
+};
+
+$("forgot").onclick = async () => {
+  const email = $("loginEmail").value.trim();
+  if (!email) return message("authStatus", "Enter your email first.");
+  try {
     await auth.sendPasswordResetEmail(email);
-    message("authStatus","If the account exists, a reset email has been sent.",false);
-  }catch(err){
-    message("authStatus",err.message);
+    message("authStatus", "If the account exists, a reset email has been sent.", false);
+  } catch (err) {
+    message("authStatus", friendlyError(err));
   }
 };
 
-$("logout").onclick=()=>auth.signOut();
+$("logout").onclick = () => auth.signOut();
 
-/* AUTH STATE */
-auth.onAuthStateChanged(async user=>{
-  me=user;
-  if(stopFeed){stopFeed();stopFeed=null;}
-  Object.values(stopLikes).forEach(fn=>fn());
-  Object.values(stopComments).forEach(fn=>fn());
-  stopLikes={};
-  stopComments={};
-  posts=[];
+function friendlyError(err) {
+  if (err?.code === "permission-denied") return "Permission denied. Check Firestore Rules.";
+  if (err?.code === "auth/email-already-in-use") return "Email already registered.";
+  if (err?.code === "auth/weak-password") return "Password should be at least 6 characters.";
+  if (err?.code === "auth/invalid-credential" || err?.code === "auth/wrong-password") return "Incorrect email or password.";
+  return err?.message || "Something went wrong.";
+}
 
-  $("auth").classList.toggle("hidden",!!user);
-  $("app").classList.toggle("hidden",!user);
-  $("logout").classList.toggle("hidden",!user);
-  $("headerName").textContent=user?(user.displayName||user.email):"";
-
-  if(!user){
-    $("notice").textContent="Please log in or create an account to use ONEHUB Social.";
-    $("feed").innerHTML="";
-    return;
-  }
-
-  $("notice").textContent="You're connected to ONEHUB Social.";
+/* Auth state */
+auth.onAuthStateChanged(async user => {
+  stopAllListeners();
+  me = user;
+  profile = null;
+  posts = [];
+  likeCounts = {};
+  commentCounts = {};
+  followingIds = new Set();
+  bookmarkIds = new Set();
+  notifications = [];
+  viewingUser = null;
+  $("auth").classList.toggle("hidden", !!user);
+  $("app").classList.toggle("hidden", !user);
+  $("logout").classList.toggle("hidden", !user);
+  $("notificationsBtn").classList.toggle("hidden", !user);
+  $("headerName").textContent = user ? (user.displayName || user.email) : "";
+  $("feed").innerHTML = "";
+  if (!user) return;
   await loadProfile();
-  startFeed();
+  if (me) {
+    startFeed();
+    startSocialListeners();
+    loadBookmarks();
+    loadSuggestions();
+  }
 });
 
-/* PROFILE */
-async function loadProfile(){
-  try{
-    const ref=db.collection("users").doc(me.uid);
-    const snap=await ref.get();
-    if(snap.exists){
-      profile=snap.data();
-    }else{
-      const uname="user_"+me.uid.slice(0,8);
-      profile={
-        displayName:me.displayName||"New user",
-        username:uname,
-        usernameLower:uname.toLowerCase(),
-        bio:""
+/* Profile */
+async function loadProfile() {
+  try {
+    const ref = db.collection("users").doc(me.uid);
+    const snap = await ref.get();
+    if (snap.exists) {
+      profile = snap.data();
+    } else {
+      const uname = "user_" + me.uid.slice(0, 8);
+      profile = {
+        displayName: me.displayName || "New user",
+        username: uname,
+        usernameLower: uname.toLowerCase(),
+        bio: "",
+        avatarStyle: "notionists",
+        link: "",
+        location: "",
+        postCount: 0
       };
-      await ref.set({...profile,createdAt:serverTime(),updatedAt:serverTime()});
+      await ref.set({ ...profile, createdAt: serverTime(), updatedAt: serverTime() });
     }
     renderProfile();
-  }catch(err){
+  } catch (err) {
     console.error(err);
-    toast("Profile error: "+err.message);
+    toast("Profile error: " + friendlyError(err));
   }
 }
-function renderProfile(){
-  if(!profile)return;
-  $("displayName").textContent=profile.displayName||"User";
-  $("username").textContent="@"+(profile.username||"user");
-  $("bio").textContent=profile.bio||"No bio yet.";
-  $("avatar").textContent=initials(profile.displayName);
-  $("headerName").textContent=profile.displayName||"";
-  $("editName").value=profile.displayName||"";
-  $("editUsername").value=profile.username||"";
-  $("editBio").value=profile.bio||"";
+
+function renderProfile() {
+  if (!profile) return;
+  $("displayName").textContent = profile.displayName || "User";
+  $("username").textContent = "@" + (profile.username || "user");
+  $("bio").textContent = profile.bio || "No bio yet.";
+  const av = $("avatar");
+  if (av) {
+    av.outerHTML = avatarHTML(profile.avatarStyle, profile.username || profile.displayName).replace('class="avatar"', 'class="avatar" id="avatar"');
+  }
+  $("headerName").textContent = profile.displayName || "";
+  $("editName").value = profile.displayName || "";
+  $("editUsername").value = profile.username || "";
+  $("editBio").value = profile.bio || "";
+  $("editLink").value = profile.link || "";
+  $("editLocation").value = profile.location || "";
+  $("editAvatarStyle").value = profile.avatarStyle || "notionists";
+  $("myPostCount").textContent = profile.postCount || 0;
+  $("myJoined").textContent = shortDate(profile.createdAt);
+  renderAvatarStylePickers();
 }
-$("editBtn").onclick=()=>{
+
+$("editBtn").onclick = () => {
   $("profileForm").classList.toggle("hidden");
+  renderAvatarStylePickers();
 };
-$("cancelEdit").onclick=()=>$("profileForm").classList.add("hidden");
+$("cancelEdit").onclick = () => $("profileForm").classList.add("hidden");
 
-$("profileForm").onsubmit=async e=>{
+$("profileForm").onsubmit = async e => {
   e.preventDefault();
-  const displayName=$("editName").value.trim();
-  const username=$("editUsername").value.trim();
-  const bio=$("editBio").value.trim();
-
-  if(!usernameOK(username))
-    return message("profileStatus","Username must be 3–20 letters, numbers or underscores.");
-  if(!displayName||displayName.length>50||bio.length>160)
-    return message("profileStatus","Please check your name and bio.");
-
-  try{
+  const displayName = $("editName").value.trim();
+  const username = $("editUsername").value.trim();
+  const bio = $("editBio").value.trim();
+  const link = $("editLink").value.trim();
+  const location = $("editLocation").value.trim();
+  const avatarStyle = $("editAvatarStyle").value || "notionists";
+  if (!usernameOK(username)) return message("profileStatus", "Username must be 3–20 letters, numbers or underscores.");
+  if (!displayName || displayName.length > 50 || bio.length > 160) return message("profileStatus", "Please check name and bio.");
+  try {
+    if (lower(username) !== profile.usernameLower) {
+      const exists = await db.collection("users").where("usernameLower", "==", lower(username)).limit(1).get();
+      if (!exists.empty) return message("profileStatus", "Username already taken.");
+    }
     await db.collection("users").doc(me.uid).update({
-      displayName,
-      username,
-      usernameLower:lower(username),
-      bio,
-      updatedAt:serverTime()
+      displayName, username, usernameLower: lower(username), bio, link, location, avatarStyle, updatedAt: serverTime()
     });
-    await me.updateProfile({displayName});
-    profile={...profile,displayName,username,usernameLower:lower(username),bio};
+    await me.updateProfile({ displayName });
+    profile = { ...profile, displayName, username, usernameLower: lower(username), bio, link, location, avatarStyle };
     renderProfile();
     $("profileForm").classList.add("hidden");
-    message("profileStatus","Profile saved.",false);
-  }catch(err){
+    message("profileStatus", "Profile saved.", false);
+    toast("Profile updated.");
+  } catch (err) {
     console.error(err);
-    message("profileStatus",err.message);
+    message("profileStatus", friendlyError(err));
   }
 };
 
-/* CREATE POST */
-$("postText").oninput=()=>{
-  $("count").textContent=$("postText").value.length+"/1000";
-};
-$("postForm").onsubmit=async e=>{
+/* Create post */
+$("postText").oninput = () => $("count").textContent = $("postText").value.length + "/1000";
+$("postForm").onsubmit = async e => {
   e.preventDefault();
-  const text=$("postText").value.trim();
-  if(!text)return;
-  if(!me||!profile)return toast("Please log in first.");
-
-  $("publish").disabled=true;
-  try{
+  const text = $("postText").value.trim();
+  if (!text || !me || !profile) return;
+  $("publish").disabled = true;
+  try {
+    const tags = extractHashtags(text);
     await db.collection("posts").add({
-      userId:me.uid,
-      displayName:profile.displayName,
-      username:profile.username,
-      usernameLower:profile.usernameLower,
+      userId: me.uid,
+      displayName: profile.displayName,
+      username: profile.username,
+      usernameLower: profile.usernameLower,
+      avatarStyle: profile.avatarStyle || "notionists",
       text,
-      createdAt:serverTime()
+      hashtags: tags,
+      createdAt: serverTime(),
+      likeCount: 0,
+      commentCount: 0
     });
-    $("postText").value="";
-    $("count").textContent="0/1000";
+    await db.collection("users").doc(me.uid).update({
+      postCount: firebase.firestore.FieldValue.increment(1)
+    });
+    profile.postCount = (profile.postCount || 0) + 1;
+    $("myPostCount").textContent = profile.postCount;
+    $("postText").value = "";
+    $("count").textContent = "0/1000";
     toast("Post published!");
-  }catch(err){
+  } catch (err) {
     console.error(err);
-    toast("Post failed: "+err.message);
-  }finally{
-    $("publish").disabled=false;
+    toast("Post failed: " + friendlyError(err));
+  } finally {
+    $("publish").disabled = false;
   }
 };
 
-/* LIVE FEED */
-function startFeed(){
-  if(stopFeed)stopFeed();
-  stopFeed=db.collection("posts")
-    .orderBy("createdAt","desc")
-    .limit(40)
-    .onSnapshot(snapshot=>{
-      posts=snapshot.docs.map(d=>({id:d.id,...d.data()}));
-      renderFeed(posts);
-    },err=>{
-      console.error(err);
-      $("feed").innerHTML='<div class="card error">Feed error: '+safe(err.message)+'</div>';
+/* Feed */
+function startFeed() {
+  if (stopFeed) stopFeed();
+  stopFeed = db.collection("posts").orderBy("createdAt", "desc").limit(50).onSnapshot(snapshot => {
+    const incoming = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    const ids = new Set(incoming.map(p => p.id));
+    Object.keys(stopLikes).forEach(id => {
+      if (!ids.has(id)) {
+        stopLikes[id]();
+        delete stopLikes[id];
+        delete likeCounts[id];
+      }
     });
-}
-
-function renderFeed(list){
-  $("feed").innerHTML="";
-  if(!list.length){
-    $("feed").innerHTML='<div class="card">No posts yet. Be the first to share something!</div>';
-    return;
-  }
-  list.forEach(post=>{
-    const el=document.createElement("article");
-    el.className="card";
-    el.id="post_"+post.id;
-    const own=me&&post.userId===me.uid;
-
-    el.innerHTML=`
-      <div class="posthead">
-        <div class="avatar">${safe(initials(post.displayName))}</div>
-        <div>
-          <strong>${safe(post.displayName||"User")}</strong>
-          <div class="muted">@${safe(post.username||"user")}</div>
-          <div class="posttime">${safe(dateText(post.createdAt))}</div>
-        </div>
-      </div>
-      <div class="posttext">${safe(post.text)}</div>
-      <div class="actions">
-        <button class="likeBtn">♡ Like <span class="likeCount">0</span></button>
-        <button class="commentToggle">Comments</button>
-        ${own?'<button class="deleteBtn danger">Delete post</button>':""}
-      </div>
-      <div class="commentArea hidden">
-        <div class="commentsList">Loading comments...</div>
-        <form class="commentForm row">
-          <input class="commentInput" maxlength="500" placeholder="Write a comment..." required>
-          <button type="submit">Send</button>
-        </form>
-      </div>`;
-
-    $("feed").appendChild(el);
-    watchLikes(post.id,el);
-    watchComments(post.id,el);
-
-    el.querySelector(".likeBtn").onclick=()=>toggleLike(post.id);
-    el.querySelector(".commentToggle").onclick=()=>{
-      el.querySelector(".commentArea").classList.toggle("hidden");
-    };
-    el.querySelector(".commentForm").onsubmit=e=>addComment(e,post.id,el);
-    if(own)el.querySelector(".deleteBtn").onclick=()=>deletePost(post.id);
+    posts = incoming;
+    incoming.forEach(p => { commentCounts[p.id] = p.commentCount || 0; });
+    renderFeed(getVisiblePosts());
+    loadTrendingTags();
+  }, err => {
+    console.error(err);
+    $("feed").innerHTML = '<div class="card error">Feed error: ' + safe(friendlyError(err)) + '</div>';
   });
 }
 
-function watchLikes(postId,el){
-  if(stopLikes[postId])stopLikes[postId]();
-  stopLikes[postId]=db.collection("posts").doc(postId)
-    .collection("likes").onSnapshot(snapshot=>{
-      const btn=el.querySelector(".likeBtn");
-      if(!btn)return;
-      btn.querySelector(".likeCount").textContent=snapshot.size;
-      const liked=!!(me&&snapshot.docs.some(d=>d.id===me.uid));
-      btn.firstChild.textContent=liked?"♥ Unlike ":"♡ Like ";
-      btn.classList.toggle("liked",liked);
-    },err=>console.error("Likes:",err));
+function startSocialListeners() {
+  stopFollowers = db.collection("users").doc(me.uid).collection("followers").onSnapshot(s => {
+    $("myFollowers").textContent = s.size;
+  }, err => console.warn(err.message));
+
+  stopFollowing = db.collection("users").doc(me.uid).collection("following").onSnapshot(s => {
+    followingIds = new Set(s.docs.map(d => d.id));
+    $("myFollowing").textContent = s.size;
+    renderFeed(getVisiblePosts());
+  }, err => console.warn(err.message));
+
+  stopNotifications = db.collection("users").doc(me.uid).collection("notifications")
+    .orderBy("createdAt", "desc").limit(40).onSnapshot(s => {
+      notifications = s.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderNotifications();
+    }, err => console.warn(err.message));
 }
 
-async function toggleLike(postId){
-  if(!me)return toast("Please log in first.");
-  const ref=db.collection("posts").doc(postId).collection("likes").doc(me.uid);
-  try{
-    const snap=await ref.get();
-    if(snap.exists)await ref.delete();
-    else await ref.set({userId:me.uid,createdAt:serverTime()});
-  }catch(err){
-    console.error(err);
-    toast("Like failed: "+err.message);
+async function loadBookmarks() {
+  try {
+    const snap = await db.collection("users").doc(me.uid).collection("bookmarks").limit(100).get();
+    bookmarkIds = new Set(snap.docs.map(d => d.id));
+  } catch (err) { console.warn(err.message); }
+}
+
+function getVisiblePosts() {
+  let list = [...posts];
+  const q = $("search").value.trim().toLowerCase();
+
+  if (activeFeed === "bookmarks") list = list.filter(p => bookmarkIds.has(p.id));
+  else if (activeFeed === "following") list = list.filter(p => p.userId === me?.uid || followingIds.has(p.userId));
+  else if (activeFeed === "trending") list.sort((a, b) => scorePost(b) - scorePost(a));
+
+  if (viewingUser) list = list.filter(p => p.userId === viewingUser.uid);
+
+  if (q) {
+    if (q.startsWith("#")) {
+      const tag = q.slice(1);
+      list = list.filter(p => (p.hashtags || []).includes(tag) || String(p.text || "").toLowerCase().includes(q));
+    } else if (q.startsWith("@")) {
+      const u = q.slice(1);
+      list = list.filter(p => String(p.username || "").toLowerCase().includes(u) || String(p.displayName || "").toLowerCase().includes(u));
+    } else {
+      list = list.filter(p =>
+        String(p.text || "").toLowerCase().includes(q) ||
+        String(p.username || "").toLowerCase().includes(q) ||
+        String(p.displayName || "").toLowerCase().includes(q) ||
+        (p.hashtags || []).some(t => t.includes(q))
+      );
+    }
   }
+
+  $("searchInfo").textContent = q
+    ? list.length + " matching post(s)"
+    : activeFeed === "trending" ? "Trending among loaded posts"
+    : activeFeed === "following" ? "Posts from people you follow"
+    : activeFeed === "bookmarks" ? "Your saved posts"
+    : viewingUser ? "Posts by @" + (viewingUser.username || "user")
+    : "Showing the latest posts";
+
+  return list;
 }
 
-function watchComments(postId,el){
-  if(stopComments[postId])stopComments[postId]();
-  stopComments[postId]=db.collection("posts").doc(postId)
-    .collection("comments").orderBy("createdAt","asc").limit(50)
-    .onSnapshot(snapshot=>{
-      const box=el.querySelector(".commentsList");
-      if(!box)return;
-      box.innerHTML="";
-      if(snapshot.empty){
-        box.textContent="No comments yet.";
-        return;
-      }
-      snapshot.forEach(doc=>{
-        const c=doc.data();
-        const div=document.createElement("div");
-        div.className="comment";
-        div.innerHTML="<strong>"+safe(c.displayName||"User")+
-          "</strong><p>"+safe(c.text)+"</p>";
-        box.appendChild(div);
+function scorePost(p) {
+  return (likeCounts[p.id] || p.likeCount || 0) * 3 + (commentCounts[p.id] || p.commentCount || 0) * 2;
+}
+
+/* Render feed + Profile view */
+function renderFeed(list) {
+  const feed = $("feed");
+  feed.innerHTML = "";
+  if (!me) return;
+
+  if (viewingUser) {
+    const header = document.createElement("div");
+    header.className = "card profile-view";
+    header.innerHTML = `
+      <div class="row between" style="align-items:flex-start">
+        <div class="profile-summary" style="margin:0">
+          ${avatarHTML(viewingUser.avatarStyle, viewingUser.username || viewingUser.displayName, "xl")}
+          <div>
+            <strong style="font-size:20px;letter-spacing:-0.4px">${safe(viewingUser.displayName || "User")}</strong>
+            <div class="muted" style="font-size:14px">@${safe(viewingUser.username || "user")}</div>
+          </div>
+        </div>
+        <button class="secondary small" id="backToFeed">← Back</button>
+      </div>
+      <p class="bio muted">${safe(viewingUser.bio || "No bio yet.")}</p>
+      <div class="meta">
+        ${viewingUser.location ? `<span>📍 ${safe(viewingUser.location)}</span>` : ""}
+        ${viewingUser.link ? `<span>🔗 ${safe(viewingUser.link)}</span>` : ""}
+        <span>Joined ${shortDate(viewingUser.createdAt)}</span>
+      </div>
+      <div class="profile-stats">
+        <div><strong id="viewFollowers">—</strong> Followers</div>
+        <div><strong id="viewFollowing">—</strong> Following</div>
+        <div><strong>${viewingUser.postCount || 0}</strong> Posts</div>
+      </div>
+      ${viewingUser.uid !== me.uid ? `
+        <button class="followBtn ${followingIds.has(viewingUser.uid) ? "secondary" : ""}" data-uid="${safe(viewingUser.uid)}" style="margin-top:6px">
+          ${followingIds.has(viewingUser.uid) ? "Following" : "+ Follow"}
+        </button>` : ""}
+    `;
+    feed.appendChild(header);
+
+    // Load real follower/following counts
+    db.collection("users").doc(viewingUser.uid).collection("followers").get()
+      .then(s => { const el = $("viewFollowers"); if (el) el.textContent = s.size; })
+      .catch(() => {});
+    db.collection("users").doc(viewingUser.uid).collection("following").get()
+      .then(s => { const el = $("viewFollowing"); if (el) el.textContent = s.size; })
+      .catch(() => {});
+
+    header.querySelector("#backToFeed").onclick = () => {
+      viewingUser = null;
+      $("composerCard").classList.remove("hidden");
+      renderFeed(getVisiblePosts());
+    };
+    const fBtn = header.querySelector(".followBtn");
+    if (fBtn) fBtn.onclick = () => toggleFollow(viewingUser.uid, viewingUser.displayName, viewingUser.username, fBtn);
+  }
+
+  if (!list.length) {
+    const msg = activeFeed === "following" ? "No posts from followed accounts yet."
+      : activeFeed === "bookmarks" ? "No bookmarked posts yet."
+      : viewingUser ? "This user hasn't posted yet."
+      : "No posts found. Be the first to share something!";
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = msg;
+    feed.appendChild(empty);
+    return;
+  }
+
+  list.forEach(post => {
+    const el = document.createElement("article");
+    el.className = "card";
+    el.id = "post_" + post.id;
+    const own = me && post.userId === me.uid;
+    const alreadyFollowing = followingIds.has(post.userId);
+    const isBookmarked = bookmarkIds.has(post.id);
+    const likes = likeCounts[post.id] ?? post.likeCount ?? 0;
+    const comments = commentCounts[post.id] ?? post.commentCount ?? 0;
+
+    el.innerHTML = `
+      <div class="posthead">
+        ${avatarHTML(post.avatarStyle, post.username || post.displayName)}
+        <div style="min-width:0;flex:1">
+          <strong class="user-link" data-uid="${safe(post.userId)}" data-username="${safe(post.username)}">${safe(post.displayName || "User")}</strong>
+          <div class="muted">@${safe(post.username || "user")}</div>
+          <div class="posttime">${safe(dateText(post.createdAt))}</div>
+        </div>
+        ${own ? "" : `<button class="followBtn small ${alreadyFollowing ? "secondary" : ""}" type="button" data-uid="${safe(post.userId)}">${alreadyFollowing ? "Following" : "+ Follow"}</button>`}
+      </div>
+      <div class="posttext">${linkify(post.text)}</div>
+      <div class="actions">
+        <button class="likeBtn" type="button">♡ Like <span class="likeCount">${likes}</span></button>
+        <button class="commentToggle" type="button">Comments <span class="stat">${comments}</span></button>
+        <button class="bookmarkBtn ${isBookmarked ? "bookmarked" : ""}" type="button">${isBookmarked ? "★ Saved" : "☆ Save"}</button>
+        ${own ? `<button class="editPostBtn secondary small" type="button">Edit</button>
+                 <button class="deleteBtn danger small" type="button">Delete</button>` : ""}
+      </div>
+      <div class="commentArea hidden">
+        <div class="commentsList muted">Open comments to load them.</div>
+        <form class="commentForm row" style="margin-top:8px">
+          <input class="commentInput" maxlength="500" placeholder="Write a comment..." required>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+      <div class="editArea hidden" style="margin-top:12px">
+        <textarea class="editText" maxlength="1000"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="saveEditBtn" type="button">Save</button>
+          <button class="cancelEditPost secondary" type="button">Cancel</button>
+        </div>
+      </div>
+    `;
+    feed.appendChild(el);
+
+    el.querySelectorAll(".user-link").forEach(n => {
+      n.onclick = () => openUserProfile(n.dataset.uid);
+    });
+    const av = el.querySelector(".avatar");
+    if (av) av.onclick = () => openUserProfile(post.userId);
+
+    el.querySelectorAll(".mention").forEach(m => {
+      m.onclick = () => openUserByUsername(m.dataset.user);
+    });
+    el.querySelectorAll(".hashtag").forEach(h => {
+      h.onclick = () => {
+        $("search").value = "#" + h.dataset.tag;
+        setFeedMode("latest");
+        renderFeed(getVisiblePosts());
+      };
+    });
+
+    watchLikes(post.id, el);
+
+    const followBtn = el.querySelector(".followBtn");
+    if (followBtn) followBtn.onclick = () => toggleFollow(post.userId, post.displayName || "User", post.username || "user", followBtn);
+
+    el.querySelector(".likeBtn").onclick = () => toggleLike(post.id, post);
+    el.querySelector(".bookmarkBtn").onclick = () => toggleBookmark(post.id, el.querySelector(".bookmarkBtn"));
+    el.querySelector(".commentToggle").onclick = () => {
+      const area = el.querySelector(".commentArea");
+      const opening = area.classList.contains("hidden");
+      area.classList.toggle("hidden");
+      if (opening) loadComments(post.id, el);
+    };
+    el.querySelector(".commentForm").onsubmit = e => addComment(e, post.id, el, post);
+
+    if (own) {
+      el.querySelector(".deleteBtn").onclick = () => deletePost(post.id);
+      el.querySelector(".editPostBtn").onclick = () => {
+        const area = el.querySelector(".editArea");
+        area.classList.toggle("hidden");
+        el.querySelector(".editText").value = post.text;
+      };
+      el.querySelector(".cancelEditPost").onclick = () => el.querySelector(".editArea").classList.add("hidden");
+      el.querySelector(".saveEditBtn").onclick = () => saveEditPost(post.id, el);
+    }
+  });
+}
+
+function watchLikes(postId, el) {
+  if (stopLikes[postId]) stopLikes[postId]();
+  stopLikes[postId] = db.collection("posts").doc(postId).collection("likes").onSnapshot(snapshot => {
+    likeCounts[postId] = snapshot.size;
+    const btn = el.querySelector(".likeBtn");
+    if (!btn) return;
+    btn.querySelector(".likeCount").textContent = snapshot.size;
+    const liked = !!(me && snapshot.docs.some(d => d.id === me.uid));
+    btn.firstChild.textContent = liked ? "♥ Unlike " : "♡ Like ";
+    btn.classList.toggle("liked", liked);
+  }, err => console.warn(err.message));
+}
+
+/* Follow / Like / Bookmark / Comments / Edit / Delete - same logic as before */
+async function toggleFollow(targetUid, targetName, targetUsername, button) {
+  if (!me || !targetUid || targetUid === me.uid) return;
+  if (busyFollows.has(targetUid)) return;
+  busyFollows.add(targetUid);
+  if (button) button.disabled = true;
+  const followingRef = db.collection("users").doc(me.uid).collection("following").doc(targetUid);
+  const followerRef = db.collection("users").doc(targetUid).collection("followers").doc(me.uid);
+  const shouldFollow = !followingIds.has(targetUid);
+  try {
+    const batch = db.batch();
+    if (shouldFollow) {
+      batch.set(followingRef, { userId: targetUid, displayName: targetName, username: targetUsername, createdAt: serverTime() });
+      batch.set(followerRef, { userId: me.uid, displayName: profile?.displayName || "User", username: profile?.username || "", createdAt: serverTime() });
+    } else {
+      batch.delete(followingRef);
+      batch.delete(followerRef);
+    }
+    await batch.commit();
+    if (shouldFollow) {
+      await createNotification(targetUid, {
+        type: "follow", actorId: me.uid, actorName: profile?.displayName || "Someone",
+        actorUsername: profile?.username || "", message: "started following you"
       });
-    },err=>{
-      console.error("Comments:",err);
-      el.querySelector(".commentsList").textContent="Could not load comments.";
-    });
+    }
+    toast(shouldFollow ? "Following @" + targetUsername : "Unfollowed @" + targetUsername);
+  } catch (err) {
+    console.error(err);
+    toast("Follow failed: " + friendlyError(err));
+  } finally {
+    busyFollows.delete(targetUid);
+    if (button) button.disabled = false;
+  }
 }
 
-async function addComment(e,postId,el){
+async function createNotification(targetUid, data) {
+  if (!me || !targetUid || targetUid === me.uid) return;
+  try {
+    await db.collection("users").doc(targetUid).collection("notifications").add({
+      ...data, read: false, createdAt: serverTime()
+    });
+  } catch (err) { console.warn(err.message); }
+}
+
+async function toggleLike(postId, post) {
+  if (!me) return toast("Please log in first.");
+  const ref = db.collection("posts").doc(postId).collection("likes").doc(me.uid);
+  try {
+    const snap = await ref.get();
+    if (snap.exists) {
+      await ref.delete();
+      await db.collection("posts").doc(postId).update({ likeCount: firebase.firestore.FieldValue.increment(-1) });
+    } else {
+      await ref.set({ userId: me.uid, createdAt: serverTime() });
+      await db.collection("posts").doc(postId).update({ likeCount: firebase.firestore.FieldValue.increment(1) });
+      if (post && post.userId !== me.uid) {
+        await createNotification(post.userId, {
+          type: "like", actorId: me.uid, actorName: profile?.displayName || "Someone",
+          actorUsername: profile?.username || "", postId, message: "liked your post"
+        });
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Like failed: " + friendlyError(err));
+  }
+}
+
+async function toggleBookmark(postId, button) {
+  if (!me) return;
+  const ref = db.collection("users").doc(me.uid).collection("bookmarks").doc(postId);
+  try {
+    if (bookmarkIds.has(postId)) {
+      await ref.delete();
+      bookmarkIds.delete(postId);
+      button.textContent = "☆ Save";
+      button.classList.remove("bookmarked");
+      toast("Removed from bookmarks");
+    } else {
+      await ref.set({ postId, createdAt: serverTime() });
+      bookmarkIds.add(postId);
+      button.textContent = "★ Saved";
+      button.classList.add("bookmarked");
+      toast("Saved to bookmarks");
+    }
+    if (activeFeed === "bookmarks") renderFeed(getVisiblePosts());
+  } catch (err) {
+    console.error(err);
+    toast("Bookmark failed: " + friendlyError(err));
+  }
+}
+
+async function loadComments(postId, el) {
+  const box = el.querySelector(".commentsList");
+  if (!box) return;
+  box.textContent = "Loading comments...";
+  try {
+    const snap = await db.collection("posts").doc(postId).collection("comments").orderBy("createdAt", "asc").limit(60).get();
+    box.innerHTML = "";
+    if (snap.empty) { box.textContent = "No comments yet."; return; }
+    snap.forEach(doc => {
+      const c = doc.data();
+      const div = document.createElement("div");
+      div.className = "comment";
+      div.innerHTML = `<strong class="user-link" data-uid="${safe(c.userId)}">${safe(c.displayName || "User")}</strong>
+        <p>${safe(c.text)}</p>
+        <div class="tiny muted">${safe(dateText(c.createdAt))}</div>`;
+      box.appendChild(div);
+      div.querySelector(".user-link").onclick = () => openUserProfile(c.userId);
+    });
+  } catch (err) {
+    box.textContent = "Could not load comments.";
+  }
+}
+
+async function addComment(e, postId, el, post) {
   e.preventDefault();
-  if(!me||!profile)return toast("Please log in first.");
-  const input=el.querySelector(".commentInput");
-  const text=input.value.trim();
-  if(!text)return;
-  try{
+  if (!me || !profile) return;
+  const input = el.querySelector(".commentInput");
+  const text = input.value.trim();
+  if (!text) return;
+  const send = e.submitter;
+  if (send) send.disabled = true;
+  try {
     await db.collection("posts").doc(postId).collection("comments").add({
-      userId:me.uid,
-      displayName:profile.displayName,
-      text,
-      createdAt:serverTime()
+      userId: me.uid, displayName: profile.displayName, username: profile.username, text, createdAt: serverTime()
     });
-    input.value="";
-  }catch(err){
-    console.error(err);
-    toast("Comment failed: "+err.message);
+    await db.collection("posts").doc(postId).update({ commentCount: firebase.firestore.FieldValue.increment(1) });
+    commentCounts[postId] = (commentCounts[postId] || 0) + 1;
+    input.value = "";
+    await loadComments(postId, el);
+    const stat = el.querySelector(".commentToggle .stat");
+    if (stat) stat.textContent = commentCounts[postId];
+    if (post && post.userId !== me.uid) {
+      await createNotification(post.userId, {
+        type: "comment", actorId: me.uid, actorName: profile.displayName,
+        actorUsername: profile.username || "", postId, message: "commented on your post"
+      });
+    }
+  } catch (err) {
+    toast("Comment failed: " + friendlyError(err));
+  } finally {
+    if (send) send.disabled = false;
   }
 }
 
-async function deletePost(postId){
-  if(!confirm("Delete this post permanently?"))return;
-  try{
+async function saveEditPost(postId, el) {
+  const text = el.querySelector(".editText").value.trim();
+  if (!text) return toast("Post cannot be empty.");
+  try {
+    const tags = extractHashtags(text);
+    await db.collection("posts").doc(postId).update({ text, hashtags: tags, editedAt: serverTime() });
+    toast("Post updated.");
+    el.querySelector(".editArea").classList.add("hidden");
+  } catch (err) {
+    toast("Edit failed: " + friendlyError(err));
+  }
+}
+
+async function deletePost(postId) {
+  if (!confirm("Delete this post permanently?")) return;
+  try {
     await db.collection("posts").doc(postId).delete();
+    await db.collection("users").doc(me.uid).update({ postCount: firebase.firestore.FieldValue.increment(-1) });
+    profile.postCount = Math.max(0, (profile.postCount || 1) - 1);
+    $("myPostCount").textContent = profile.postCount;
     toast("Post deleted.");
-  }catch(err){
-    console.error(err);
-    toast("Delete failed: "+err.message);
+  } catch (err) {
+    toast("Delete failed: " + friendlyError(err));
   }
 }
 
-/* SEARCH: SEARCHES THE POSTS ALREADY LOADED IN THE FEED */
-$("search").oninput=()=>{
-  const q=$("search").value.trim().toLowerCase();
-  const filtered=posts.filter(p=>
-    String(p.text||"").toLowerCase().includes(q)||
-    String(p.username||"").toLowerCase().includes(q)||
-    String(p.displayName||"").toLowerCase().includes(q)
-  );
-  $("searchInfo").textContent=q
-    ?filtered.length+" matching loaded post(s)"
-    :"Showing the latest posts";
-  renderFeed(filtered);
+/* Open full user profile */
+async function openUserProfile(uid) {
+  if (!uid) return;
+  try {
+    const snap = await db.collection("users").doc(uid).get();
+    if (!snap.exists) { toast("User not found."); return; }
+    viewingUser = { uid, ...snap.data() };
+    $("composerCard").classList.add("hidden");
+    activeFeed = "latest";
+    setFeedMode("latest");
+    renderFeed(getVisiblePosts());
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    toast("Could not open profile.");
+  }
+}
+
+async function openUserByUsername(uname) {
+  try {
+    const snap = await db.collection("users").where("usernameLower", "==", lower(uname)).limit(1).get();
+    if (snap.empty) { toast("User @" + uname + " not found."); return; }
+    openUserProfile(snap.docs[0].id);
+  } catch (err) {
+    toast("Search failed.");
+  }
+}
+
+/* Notifications */
+function renderNotifications() {
+  const box = $("notificationsList");
+  box.innerHTML = "";
+  const unread = notifications.filter(n => !n.read).length;
+  $("unreadCount").textContent = unread ? `(${unread})` : "";
+  if (!notifications.length) { box.textContent = "No notifications yet."; return; }
+  notifications.forEach(n => {
+    const item = document.createElement("div");
+    item.className = "notification" + (!n.read ? " unread" : "");
+    item.innerHTML = `<strong>${safe(n.actorName || "Someone")}</strong> ${safe(n.message || "interacted with you")}
+      <span class="muted">${safe(dateText(n.createdAt))}</span>`;
+    item.onclick = () => { if (n.actorUsername) openUserByUsername(n.actorUsername); };
+    box.appendChild(item);
+  });
+}
+function toggleNotificationsPanel() { $("notificationsPanel").classList.toggle("hidden"); }
+$("notificationsBtn").onclick = toggleNotificationsPanel;
+$("showNotifications").onclick = toggleNotificationsPanel;
+
+$("markRead").onclick = async () => {
+  if (!me) return;
+  const unread = notifications.filter(n => !n.read);
+  if (!unread.length) return toast("No unread notifications.");
+  try {
+    const batch = db.batch();
+    unread.forEach(n => batch.update(db.collection("users").doc(me.uid).collection("notifications").doc(n.id), { read: true }));
+    await batch.commit();
+    toast("Notifications marked as read.");
+  } catch (err) {
+    toast("Could not mark read.");
+  }
 };
+
+/* Tabs & Search */
+$("latestTab").onclick = () => { viewingUser = null; $("composerCard").classList.remove("hidden"); setFeedMode("latest"); };
+$("trendingTab").onclick = () => { viewingUser = null; $("composerCard").classList.remove("hidden"); setFeedMode("trending"); };
+$("followingTab").onclick = () => { viewingUser = null; $("composerCard").classList.remove("hidden"); setFeedMode("following"); };
+$("bookmarksTab").onclick = () => { viewingUser = null; $("composerCard").classList.remove("hidden"); setFeedMode("bookmarks"); };
+
+function setFeedMode(mode) {
+  activeFeed = mode;
+  ["latest", "trending", "following", "bookmarks"].forEach(m => {
+    const btn = $(m + "Tab");
+    if (btn) btn.classList.toggle("secondary", mode !== m);
+  });
+  renderFeed(getVisiblePosts());
+}
+$("search").oninput = () => renderFeed(getVisiblePosts());
+$("showBookmarks").onclick = () => { viewingUser = null; $("composerCard").classList.remove("hidden"); setFeedMode("bookmarks"); };
+$("showMyPosts").onclick = () => { if (profile) openUserProfile(me.uid); };
+
+/* Suggestions + Trending */
+async function loadSuggestions() {
+  const box = $("suggestions");
+  try {
+    const snap = await db.collection("users").orderBy("createdAt", "desc").limit(12).get();
+    const users = snap.docs.map(d => ({ uid: d.id, ...d.data() }))
+      .filter(u => u.uid !== me.uid && !followingIds.has(u.uid)).slice(0, 5);
+    if (!users.length) { box.textContent = "No suggestions right now."; return; }
+    box.innerHTML = "";
+    users.forEach(u => {
+      const div = document.createElement("div");
+      div.className = "suggest-item";
+      div.innerHTML = `
+        ${avatarHTML(u.avatarStyle, u.username || u.displayName, "sm")}
+        <div class="info">
+          <strong class="user-link" data-uid="${safe(u.uid)}">${safe(u.displayName || "User")}</strong>
+          <div class="muted">@${safe(u.username || "user")}</div>
+        </div>
+        <button class="small followBtn" data-uid="${safe(u.uid)}">Follow</button>
+      `;
+      box.appendChild(div);
+      div.querySelector(".user-link").onclick = () => openUserProfile(u.uid);
+      div.querySelector(".followBtn").onclick = ev => toggleFollow(u.uid, u.displayName, u.username, ev.target);
+    });
+  } catch (err) {
+    box.textContent = "Could not load suggestions.";
+  }
+}
+
+function loadTrendingTags() {
+  const box = $("tagCloud");
+  try {
+    const freq = {};
+    posts.forEach(p => { (p.hashtags || []).forEach(t => { freq[t] = (freq[t] || 0) + 1; }); });
+    const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    if (!sorted.length) { box.textContent = "No hashtags yet. Use #tag in posts!"; return; }
+    box.innerHTML = "";
+    sorted.forEach(([tag, count]) => {
+      const span = document.createElement("span");
+      span.textContent = "#" + tag + " · " + count;
+      span.onclick = () => {
+        $("search").value = "#" + tag;
+        setFeedMode("latest");
+        renderFeed(getVisiblePosts());
+      };
+      box.appendChild(span);
+    });
+  } catch {
+    box.textContent = "—";
+  }
+}
+
+renderAvatarStylePickers();
 </script>
 </body>
 </html>
