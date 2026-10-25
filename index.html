@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ONEHUB Social</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f5fa;color:#222338;font-family:Arial,sans-serif}
+header{background:white;border-bottom:1px solid #e4e5ee;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0}
+.logo{font-size:23px;font-weight:900;color:#635bff}
+.logo span{color:#222338}
+main{max-width:900px;margin:24px auto;padding:0 14px}
+.card{background:white;border:1px solid #e5e6ee;border-radius:16px;padding:18px;margin-bottom:16px}
+h2{margin-top:0}
+input,textarea{width:100%;padding:12px;margin:7px 0;border:1px solid #dddfea;border-radius:10px;font:inherit}
+textarea{resize:vertical;min-height:80px}
+button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700;background:#635bff;color:white}
+button:disabled{opacity:.6}
+.light{background:#efeeff;color:#554be4}
+.danger{background:#fff0f0;color:#c62828}
+.hidden{display:none!important}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.muted{color:#77798b;font-size:13px}
+.status{font-size:14px;margin-top:10px;overflow-wrap:anywhere}
+.error{color:#c62828}
+.success{color:#188038}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eceaff;color:#554be4;font-weight:bold}
+.posthead{display:flex;gap:10px;align-items:center}
+.posttext{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;margin:18px 0}
+.posttime{font-size:12px;color:#77798b;margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid #eee;padding-top:12px}
+.actions button{background:#f0efff;color:#5148d8}
+.comment{background:#f6f6fb;border-radius:9px;padding:10px;margin:8px 0;overflow-wrap:anywhere}
+.comment p{margin:5px 0;white-space:pre-wrap}
+#feed{margin-top:15px}
+#toast{position:fixed;bottom:15px;left:5%;width:90%;background:#222338;color:white;padding:12px;border-radius:10px;z-index:9}
+@media(min-width:760px){.columns{display:grid;grid-template-columns:260px 1fr;gap:16px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ONEHUB <span>Social</span></div>
+  <div class="row">
+    <span id="headerName" class="muted"></span>
+    <button id="logout" class="light hidden">Log out</button>
+  </div>
+</header>
+
+<main>
+  <div id="notice" class="card">Connecting to Firebase...</div>
+
+  <section id="auth" class="card">
+    <h2>Welcome to ONEHUB</h2>
+    <p class="muted">Connect. Share. Discover.</p>
+
+    <div class="row">
+      <button id="loginTab" class="light">Login</button>
+      <button id="signupTab">Create account</button>
+    </div>
+
+    <form id="loginForm" class="hidden">
+      <input id="loginEmail" type="email" placeholder="Email" required>
+      <input id="loginPass" type="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <button id="forgot" type="button" class="light">Reset password</button>
+    </form>
+
+    <form id="signupForm">
+      <input id="newName" placeholder="Display name" maxlength="50" required>
+      <input id="newUsername" placeholder="Username (letters, numbers, _)" maxlength="20" required>
+      <input id="newEmail" type="email" placeholder="Email address" required>
+      <input id="newPass" type="password" placeholder="Password (6+ characters)" minlength="6" required>
+      <textarea id="newBio" placeholder="Short bio (optional)" maxlength="160"></textarea>
+      <button type="submit">Create account</button>
+    </form>
+    <div id="authStatus" class="status"></div>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="columns">
+      <aside>
+        <div class="card">
+          <h3>My profile</h3>
+          <div class="row">
+            <div id="avatar" class="avatar">U</div>
+            <div>
+              <strong id="displayName"></strong>
+              <div id="username" class="muted"></div>
+            </div>
+          </div>
+          <p id="bio" class="muted"></p>
+          <button id="editBtn" class="light">Edit profile</button>
+
+          <form id="profileForm" class="hidden">
+            <input id="editName" placeholder="Display name" maxlength="50" required>
+            <input id="editUsername" placeholder="Username" maxlength="20" required>
+            <textarea id="editBio" placeholder="Bio" maxlength="160"></textarea>
+            <button type="submit">Save profile</button>
+            <button id="cancelEdit" type="button" class="light">Cancel</button>
+          </form>
+          <div id="profileStatus" class="status"></div>
+        </div>
+      </aside>
+
+      <section>
+        <div class="card">
+          <h2>Your feed</h2>
+          <form id="postForm">
+            <textarea id="postText" maxlength="1000" placeholder="What's on your mind?" required></textarea>
+            <div class="row between">
+              <span id="count" class="muted">0/1000</span>
+              <button id="publish" type="submit">Publish post</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <input id="search" placeholder="Search posts or usernames...">
+          <div id="searchInfo" class="muted"></div>
+        </div>
+
+        <div id="feed"></div>
+      </section>
+    </div>
+  </section>
+
+  <footer class="muted">ONEHUB Social · Share respectfully and protect your privacy.</footer>
+</main>
+
+<div id="toast" class="hidden"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+"use strict";
+
+/* FIREBASE CONFIGURATION */
+const firebaseConfig = {
+  apiKey: "AIzaSyDwWAS2dcTQhbQTmahKNzJJzlqBye6Zb54",
+  authDomain: "onehub-social.firebaseapp.com",
+  projectId: "onehub-social",
+  storageBucket: "onehub-social.firebasestorage.app",
+  messagingSenderId: "888069396409",
+  appId: "1:888069396409:web:20d3e0d3ebba2961be0868",
+  measurementId: "G-G63E9C76EN"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const serverTime = () => firebase.firestore.FieldValue.serverTimestamp();
+
+let me = null;
+let profile = null;
+let posts = [];
+let stopFeed = null;
+let stopLikes = {};
+let stopComments = {};
+let toastTimer;
+
+const $ = id => document.getElementById(id);
+const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+const usernameOK = value => /^[A-Za-z0-9_]{3,20}$/.test(value);
+const lower = value => value.trim().replace(/^@/,"").toLowerCase();
+
+function message(id,text,error=true){
+  $(id).textContent=text;
+  $(id).className="status "+(error?"error":"success");
+}
+function toast(text){
+  $("toast").textContent=text;
+  $("toast").classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3200);
+}
+function dateText(ts){
+  if(!ts || !ts.toDate) return "Just now";
+  return ts.toDate().toLocaleString();
+}
+function initials(name){
+  return (String(name||"U").trim()[0]||"U").toUpperCase();
+}
+
+/* AUTH TABS */
+$("loginTab").onclick=()=>{
+  $("loginForm").classList.remove("hidden");
+  $("signupForm").classList.add("hidden");
+  $("loginTab").classList.remove("light");
+  $("signupTab").classList.add("light");
+};
+$("signupTab").onclick=()=>{
+  $("signupForm").classList.remove("hidden");
+  $("loginForm").classList.add("hidden");
+  $("signupTab").classList.remove("light");
+  $("loginTab").classList.add("light");
+};
+
+/* SIGN UP */
+$("signupForm").onsubmit=async e=>{
+  e.preventDefault();
+  const name=$("newName").value.trim();
+  const username=$("newUsername").value.trim();
+  const email=$("newEmail").value.trim();
+  const password=$("newPass").value;
+  const bio=$("newBio").value.trim();
+
+  if(!usernameOK(username))
+    return message("authStatus","Username must be 3–20 letters, numbers or underscores.");
+  if(!name || name.length>50 || bio.length>160)
+    return message("authStatus","Please check your name and bio.");
+
+  try{
+    message("authStatus","Creating account...",false);
+    const result=await auth.createUserWithEmailAndPassword(email,password);
+    const user=result.user;
+
+    await db.collection("users").doc(user.uid).set({
+      displayName:name,
+      username:username,
+      usernameLower:lower(username),
+      bio:bio,
+      createdAt:serverTime(),
+      updatedAt:serverTime()
+    });
+    await user.updateProfile({displayName:name});
+    toast("Account created!");
+  }catch(err){
+    console.error(err);
+    message("authStatus",err.message||"Could not create account.");
+  }
+};
+
+/* LOGIN */
+$("loginForm").onsubmit=async e=>{
+  e.preventDefault();
+  try{
+    await auth.signInWithEmailAndPassword(
+      $("loginEmail").value.trim(),
+      $("loginPass").value
+    );
+    toast("Welcome back!");
+  }catch(err){
+    console.error(err);
+    message("authStatus",err.message||"Login failed.");
+  }
+};
+
+/* PASSWORD RESET */
+$("forgot").onclick=async()=>{
+  const email=$("loginEmail").value.trim();
+  if(!email) return message("authStatus","Enter your email first.");
+  try{
+    await auth.sendPasswordResetEmail(email);
+    message("authStatus","If the account exists, a reset email has been sent.",false);
+  }catch(err){
+    message("authStatus",err.message);
+  }
+};
+
+$("logout").onclick=()=>auth.signOut();
+
+/* AUTH STATE */
+auth.onAuthStateChanged(async user=>{
+  me=user;
+  if(stopFeed){stopFeed();stopFeed=null;}
+  Object.values(stopLikes).forEach(fn=>fn());
+  Object.values(stopComments).forEach(fn=>fn());
+  stopLikes={};
+  stopComments={};
+  posts=[];
+
+  $("auth").classList.toggle("hidden",!!user);
+  $("app").classList.toggle("hidden",!user);
+  $("logout").classList.toggle("hidden",!user);
+  $("headerName").textContent=user?(user.displayName||user.email):"";
+
+  if(!user){
+    $("notice").textContent="Please log in or create an account to use ONEHUB Social.";
+    $("feed").innerHTML="";
+    return;
+  }
+
+  $("notice").textContent="You're connected to ONEHUB Social.";
+  await loadProfile();
+  startFeed();
+});
+
+/* PROFILE */
+async function loadProfile(){
+  try{
+    const ref=db.collection("users").doc(me.uid);
+    const snap=await ref.get();
+    if(snap.exists){
+      profile=snap.data();
+    }else{
+      const uname="user_"+me.uid.slice(0,8);
+      profile={
+        displayName:me.displayName||"New user",
+        username:uname,
+        usernameLower:uname.toLowerCase(),
+        bio:""
+      };
+      await ref.set({...profile,createdAt:serverTime(),updatedAt:serverTime()});
+    }
+    renderProfile();
+  }catch(err){
+    console.error(err);
+    toast("Profile error: "+err.message);
+  }
+}
+function renderProfile(){
+  if(!profile)return;
+  $("displayName").textContent=profile.displayName||"User";
+  $("username").textContent="@"+(profile.username||"user");
+  $("bio").textContent=profile.bio||"No bio yet.";
+  $("avatar").textContent=initials(profile.displayName);
+  $("headerName").textContent=profile.displayName||"";
+  $("editName").value=profile.displayName||"";
+  $("editUsername").value=profile.username||"";
+  $("editBio").value=profile.bio||"";
+}
+$("editBtn").onclick=()=>{
+  $("profileForm").classList.toggle("hidden");
+};
+$("cancelEdit").onclick=()=>$("profileForm").classList.add("hidden");
+
+$("profileForm").onsubmit=async e=>{
+  e.preventDefault();
+  const displayName=$("editName").value.trim();
+  const username=$("editUsername").value.trim();
+  const bio=$("editBio").value.trim();
+
+  if(!usernameOK(username))
+    return message("profileStatus","Username must be 3–20 letters, numbers or underscores.");
+  if(!displayName||displayName.length>50||bio.length>160)
+    return message("profileStatus","Please check your name and bio.");
+
+  try{
+    await db.collection("users").doc(me.uid).update({
+      displayName,
+      username,
+      usernameLower:lower(username),
+      bio,
+      updatedAt:serverTime()
+    });
+    await me.updateProfile({displayName});
+    profile={...profile,displayName,username,usernameLower:lower(username),bio};
+    renderProfile();
+    $("profileForm").classList.add("hidden");
+    message("profileStatus","Profile saved.",false);
+  }catch(err){
+    console.error(err);
+    message("profileStatus",err.message);
+  }
+};
+
+/* CREATE POST */
+$("postText").oninput=()=>{
+  $("count").textContent=$("postText").value.length+"/1000";
+};
+$("postForm").onsubmit=async e=>{
+  e.preventDefault();
+  const text=$("postText").value.trim();
+  if(!text)return;
+  if(!me||!profile)return toast("Please log in first.");
+
+  $("publish").disabled=true;
+  try{
+    await db.collection("posts").add({
+      userId:me.uid,
+      displayName:profile.displayName,
+      username:profile.username,
+      usernameLower:profile.usernameLower,
+      text,
+      createdAt:serverTime()
+    });
+    $("postText").value="";
+    $("count").textContent="0/1000";
+    toast("Post published!");
+  }catch(err){
+    console.error(err);
+    toast("Post failed: "+err.message);
+  }finally{
+    $("publish").disabled=false;
+  }
+};
+
+/* LIVE FEED */
+function startFeed(){
+  if(stopFeed)stopFeed();
+  stopFeed=db.collection("posts")
+    .orderBy("createdAt","desc")
+    .limit(40)
+    .onSnapshot(snapshot=>{
+      posts=snapshot.docs.map(d=>({id:d.id,...d.data()}));
+      renderFeed(posts);
+    },err=>{
+      console.error(err);
+      $("feed").innerHTML='<div class="card error">Feed error: '+safe(err.message)+'</div>';
+    });
+}
+
+function renderFeed(list){
+  $("feed").innerHTML="";
+  if(!list.length){
+    $("feed").innerHTML='<div class="card">No posts yet. Be the first to share something!</div>';
+    return;
+  }
+  list.forEach(post=>{
+    const el=document.createElement("article");
+    el.className="card";
+    el.id="post_"+post.id;
+    const own=me&&post.userId===me.uid;
+
+    el.innerHTML=`
+      <div class="posthead">
+        <div class="avatar">${safe(initials(post.displayName))}</div>
+        <div>
+          <strong>${safe(post.displayName||"User")}</strong>
+          <div class="muted">@${safe(post.username||"user")}</div>
+          <div class="posttime">${safe(dateText(post.createdAt))}</div>
+        </div>
+      </div>
+      <div class="posttext">${safe(post.text)}</div>
+      <div class="actions">
+        <button class="likeBtn">♡ Like <span class="likeCount">0</span></button>
+        <button class="commentToggle">Comments</button>
+        ${own?'<button class="deleteBtn danger">Delete post</button>':""}
+      </div>
+      <div class="commentArea hidden">
+        <div class="commentsList">Loading comments...</div>
+        <form class="commentForm row">
+          <input class="commentInput" maxlength="500" placeholder="Write a comment..." required>
+          <button type="submit">Send</button>
+        </form>
+      </div>`;
+
+    $("feed").appendChild(el);
+    watchLikes(post.id,el);
+    watchComments(post.id,el);
+
+    el.querySelector(".likeBtn").onclick=()=>toggleLike(post.id);
+    el.querySelector(".commentToggle").onclick=()=>{
+      el.querySelector(".commentArea").classList.toggle("hidden");
+    };
+    el.querySelector(".commentForm").onsubmit=e=>addComment(e,post.id,el);
+    if(own)el.querySelector(".deleteBtn").onclick=()=>deletePost(post.id);
+  });
+}
+
+function watchLikes(postId,el){
+  if(stopLikes[postId])stopLikes[postId]();
+  stopLikes[postId]=db.collection("posts").doc(postId)
+    .collection("likes").onSnapshot(snapshot=>{
+      const btn=el.querySelector(".likeBtn");
+      if(!btn)return;
+      btn.querySelector(".likeCount").textContent=snapshot.size;
+      const liked=!!(me&&snapshot.docs.some(d=>d.id===me.uid));
+      btn.firstChild.textContent=liked?"♥ Unlike ":"♡ Like ";
+      btn.classList.toggle("liked",liked);
+    },err=>console.error("Likes:",err));
+}
+
+async function toggleLike(postId){
+  if(!me)return toast("Please log in first.");
+  const ref=db.collection("posts").doc(postId).collection("likes").doc(me.uid);
+  try{
+    const snap=await ref.get();
+    if(snap.exists)await ref.delete();
+    else await ref.set({userId:me.uid,createdAt:serverTime()});
+  }catch(err){
+    console.error(err);
+    toast("Like failed: "+err.message);
+  }
+}
+
+function watchComments(postId,el){
+  if(stopComments[postId])stopComments[postId]();
+  stopComments[postId]=db.collection("posts").doc(postId)
+    .collection("comments").orderBy("createdAt","asc").limit(50)
+    .onSnapshot(snapshot=>{
+      const box=el.querySelector(".commentsList");
+      if(!box)return;
+      box.innerHTML="";
+      if(snapshot.empty){
+        box.textContent="No comments yet.";
+        return;
+      }
+      snapshot.forEach(doc=>{
+        const c=doc.data();
+        const div=document.createElement("div");
+        div.className="comment";
+        div.innerHTML="<strong>"+safe(c.displayName||"User")+
+          "</strong><p>"+safe(c.text)+"</p>";
+        box.appendChild(div);
+      });
+    },err=>{
+      console.error("Comments:",err);
+      el.querySelector(".commentsList").textContent="Could not load comments.";
+    });
+}
+
+async function addComment(e,postId,el){
+  e.preventDefault();
+  if(!me||!profile)return toast("Please log in first.");
+  const input=el.querySelector(".commentInput");
+  const text=input.value.trim();
+  if(!text)return;
+  try{
+    await db.collection("posts").doc(postId).collection("comments").add({
+      userId:me.uid,
+      displayName:profile.displayName,
+      text,
+      createdAt:serverTime()
+    });
+    input.value="";
+  }catch(err){
+    console.error(err);
+    toast("Comment failed: "+err.message);
+  }
+}
+
+async function deletePost(postId){
+  if(!confirm("Delete this post permanently?"))return;
+  try{
+    await db.collection("posts").doc(postId).delete();
+    toast("Post deleted.");
+  }catch(err){
+    console.error(err);
+    toast("Delete failed: "+err.message);
+  }
+}
+
+/* SEARCH: SEARCHES THE POSTS ALREADY LOADED IN THE FEED */
+$("search").oninput=()=>{
+  const q=$("search").value.trim().toLowerCase();
+  const filtered=posts.filter(p=>
+    String(p.text||"").toLowerCase().includes(q)||
+    String(p.username||"").toLowerCase().includes(q)||
+    String(p.displayName||"").toLowerCase().includes(q)
+  );
+  $("searchInfo").textContent=q
+    ?filtered.length+" matching loaded post(s)"
+    :"Showing the latest posts";
+  renderFeed(filtered);
+};
+</script>
+</body>
+</html>
